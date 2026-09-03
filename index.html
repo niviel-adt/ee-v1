@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#050505" />
+  <meta name="description" content="ExaltedEra — Legacy lives on." />
+  <title>ExaltedEra</title>
+  <link rel="icon" href="assets/exaltedera-logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <canvas id="embers" aria-hidden="true"></canvas>
+
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#top" aria-label="ExaltedEra home">
+      <img src="assets/exaltedera-logo.png" alt="" />
+      <span>EXALTEDERA</span>
+    </a>
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <a href="#legacy">LEGACY</a>
+      <a href="#teams">TEAMS</a>
+      <a href="#events">EVENTS</a>
+      <a href="#stories">STORIES</a>
+      <a href="#join">COMMUNITY</a>
+    </nav>
+    <a class="outline-btn" href="#join">JOIN ERA</a>
+  </header>
+
+  <main>
+    <!-- CINEMATIC ENTRY -->
+    <section class="portal-section" id="top" aria-label="Enter ExaltedEra">
+      <div class="portal-sticky" id="portalSticky">
+        <div class="ambient-orbit orbit-a"></div>
+        <div class="ambient-orbit orbit-b"></div>
+        <div class="floor-glow"></div>
+
+        <div class="intro-copy" id="introCopy">
+          <span>WELCOME TO</span>
+          <h1>EXALTEDERA</h1>
+          <p>Legacy lives on.</p>
+        </div>
+
+        <div class="door-wrap" id="doorWrap" aria-hidden="true">
+          <div class="door-backlight"></div>
+          <div class="door-shadow"></div>
+
+          <!-- Both halves use the same crest image and clip it in half. -->
+          <div class="crest-half crest-left">
+            <img src="assets/door-crest.png" alt="" />
+          </div>
+          <div class="crest-half crest-right">
+            <img src="assets/door-crest.png" alt="" />
+          </div>
+
+          <div class="energy-line" id="energyLine"></div>
+          <div class="energy-core" id="energyCore">✦</div>
+        </div>
+
+        <div class="inside-glimpse" id="insideGlimpse" aria-hidden="true">
+          <div class="glimpse-content">
+            <span>THE ERA BEGINS</span>
+            <h2>RISE TOGETHER.<br>RULE FOREVER.</h2>
+            <div class="glimpse-line"></div>
+          </div>
+        </div>
+
+        <div class="scroll-hint" id="scrollHint">
+          <span>SCROLL TO ENTER</span>
+          <i></i>
+          <b></b>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUE WEBSITE -->
+    <section class="site" id="site">
+      <section class="hero section-pad" id="legacy">
+        <div class="hero-graphic reveal">
+          <div class="hero-ring"></div>
+          <img src="assets/exaltedera-logo.png" alt="ExaltedEra crest" />
+        </div>
+        <div class="hero-copy reveal">
+          <span class="kicker">LEGACY LIVES ON</span>
+          <h2>AN ERA<br><em>WORTH REMEMBERING.</em></h2>
+          <p>ExaltedEra is built for competition, culture, and the people who want to leave a mark long after the match ends.</p>
+          <div class="actions">
+            <a class="solid-btn" href="#teams">ENTER THE ERA <span>↗</span></a>
+            <button class="ghost-btn" id="watchBtn" type="button">WATCH TRAILER</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="ticker" aria-label="ExaltedEra motto">
+        <div class="ticker-track">
+          <span>EXALTEDERA ✦ LEGACY LIVES ON ✦ FOR GLORY ✦ FOR THE ERA ✦ </span>
+          <span>EXALTEDERA ✦ LEGACY LIVES ON ✦ FOR GLORY ✦ FOR THE ERA ✦ </span>
+        </div>
+      </section>
+
+      <section class="section-pad" id="teams">
+        <div class="section-heading reveal">
+          <span class="kicker">OUR DIVISIONS</span>
+          <h2>BUILT TO<br>COMPETE.</h2>
+        </div>
+        <div class="card-grid">
+          <article class="era-card reveal tilt">
+            <span class="card-no">01</span>
+            <div class="card-mark"><img src="assets/exaltedera-logo.png" alt="" /></div>
+            <div class="card-copy"><small>VALORANT MOBILE</small><h3>EXALTED<br>VANGUARD</h3><a href="#join">VIEW ROSTER ↗</a></div>
+          </article>
+          <article class="era-card reveal tilt">
+            <span class="card-no">02</span>
+            <div class="card-mark"><img src="assets/exaltedera-logo.png" alt="" /></div>
+            <div class="card-copy"><small>CONTENT</small><h3>ERA<br>CREATIVE</h3><a href="#stories">MEET CREATORS ↗</a></div>
+          </article>
+          <article class="era-card reveal tilt">
+            <span class="card-no">03</span>
+            <div class="card-mark"><img src="assets/exaltedera-logo.png" alt="" /></div>
+            <div class="card-copy"><small>COMMUNITY</small><h3>EXALTED<br>LEGION</h3><a href="#join">JOIN THE ERA ↗</a></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="event-section section-pad" id="events">
+        <div class="event-panel reveal">
+          <div class="event-copy">
+            <span class="kicker">NEXT EVENT</span>
+            <h2>ERA<br>CHAMPIONSHIP</h2>
+            <p>Where contenders become legends.</p>
+          </div>
+          <div class="countdown" id="countdown">
+            <div><strong>12</strong><span>DAYS</span></div>
+            <div><strong>08</strong><span>HRS</span></div>
+            <div><strong>47</strong><span>MINS</span></div>
+            <div><strong>32</strong><span>SECS</span></div>
+          </div>
+          <a class="solid-btn" href="#join">VIEW EVENT <span>↗</span></a>
+        </div>
+      </section>
+
+      <section class="stories section-pad" id="stories">
+        <div class="section-heading reveal">
+          <span class="kicker">FROM THE ERA</span>
+          <h2>STORIES.<br>MOMENTS.<br>LEGACY.</h2>
+        </div>
+        <div class="story-list">
+          <article class="story reveal"><span>01</span><div><h3>THE BIRTH OF EXALTEDERA</h3><p>Inside the identity and the philosophy behind the organization.</p></div><b>↗</b></article>
+          <article class="story reveal"><span>02</span><div><h3>ROAD TO THE NEXT TITLE</h3><p>Preparation, pressure, and the pursuit of a championship.</p></div><b>↗</b></article>
+          <article class="story reveal"><span>03</span><div><h3>BEYOND COMPETITION</h3><p>A home for competitors, creators, and everyone building the era.</p></div><b>↗</b></article>
+        </div>
+      </section>
+
+      <section class="join section-pad" id="join">
+        <div class="join-mark reveal"><img src="assets/exaltedera-logo.png" alt="" /></div>
+        <div class="join-copy reveal">
+          <span class="kicker">THIS IS YOUR INVITATION</span>
+          <h2>ENTER<br>THE ERA.</h2>
+          <p>Follow the teams, join the community, and be part of what comes next.</p>
+          <a class="solid-btn" href="#top">JOIN EXALTEDERA <span>↗</span></a>
+        </div>
+      </section>
+
+      <footer>
+        <a class="footer-brand" href="#top"><img src="assets/exaltedera-logo.png" alt="" /><span>EXALTEDERA</span></a>
+        <p>FOR GLORY. FOR THE ERA.</p>
+        <p>© 2026 EXALTEDERA</p>
+      </footer>
+    </section>
+  </main>
+
+  <div class="modal" id="modal" aria-hidden="true">
+    <button id="closeModal" aria-label="Close">×</button>
+    <div class="modal-card">
+      <span>EXALTEDERA</span>
+      <h2>TRAILER PLACEHOLDER</h2>
+      <p>Replace this with your YouTube embed or MP4 video.</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
