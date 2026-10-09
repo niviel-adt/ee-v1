@@ -1,112 +1,15 @@
-gsap.registerPlugin(ScrollTrigger);
-
-const portal = document.querySelector('.portal-section');
-const portalSticky = document.querySelector('#portalSticky');
-const doorWrap = document.querySelector('#doorWrap');
-const left = document.querySelector('.crest-left');
-const right = document.querySelector('.crest-right');
-const intro = document.querySelector('#introCopy');
-const hint = document.querySelector('#scrollHint');
-const glimpse = document.querySelector('#insideGlimpse');
-const line = document.querySelector('#energyLine');
-const core = document.querySelector('#energyCore');
-
-// 1) Closed crest
-// 2) Scroll zooms toward it
-// 3) Energy builds along the center seam
-// 4) The crest splits and opens like a door
-// 5) Camera pushes through into the real site
-const entry = gsap.timeline({
-  scrollTrigger:{
-    trigger:portal,
-    start:'top top',
-    end:'bottom bottom',
-    scrub:1.15
-  }
-});
-
-entry
-  .to(doorWrap,{scale:1.48,yPercent:1.5,ease:'none',duration:3.15},0)
-  .to(intro,{opacity:0,y:-35,ease:'none',duration:1.2},.55)
-  .to(hint,{opacity:0,y:18,ease:'none',duration:.8},.7)
-  .to(line,{opacity:1,width:3,boxShadow:'0 0 18px #fff4c2,0 0 85px #e5a42c',ease:'none',duration:1.2},1.35)
-  .to(core,{opacity:1,scale:2.7,textShadow:'0 0 18px #fff,0 0 90px #e5a42c',ease:'none',duration:1.1},1.35)
-  .to(glimpse,{opacity:1,scale:1,ease:'none',duration:.8},1.75)
-  .to(left,{xPercent:-58,rotateY:-34,rotateZ:-1.5,ease:'none',duration:2.2},2.05)
-  .to(right,{xPercent:58,rotateY:34,rotateZ:1.5,ease:'none',duration:2.2},2.05)
-  .to(line,{opacity:0,ease:'none',duration:.6},2.35)
-  .to(core,{opacity:0,scale:5,ease:'none',duration:.7},2.45)
-  .to(doorWrap,{scale:3.45,ease:'power1.in',duration:1.5},3.4)
-  .to(glimpse,{scale:2.35,filter:'blur(0px)',ease:'power1.in',duration:1.45},3.4)
-  .to(portalSticky,{opacity:0,ease:'none',duration:.65},4.45);
-
-// Section reveals.
-gsap.utils.toArray('.reveal').forEach(el=>{
-  gsap.to(el,{opacity:1,y:0,duration:1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 86%',once:true}});
-});
-
-// Card tilt.
-document.querySelectorAll('.tilt').forEach(card=>{
-  card.addEventListener('mousemove',e=>{
-    const r=card.getBoundingClientRect();
-    const x=(e.clientX-r.left)/r.width-.5;
-    const y=(e.clientY-r.top)/r.height-.5;
-    card.style.transform=`perspective(900px) rotateY(${x*7}deg) rotateX(${y*-7}deg)`;
-  });
-  card.addEventListener('mouseleave',()=>card.style.transform='perspective(900px) rotateY(0deg) rotateX(0deg)');
-});
-
-// Header background after scroll.
-const topbar=document.querySelector('#topbar');
-window.addEventListener('scroll',()=>topbar.classList.toggle('scrolled',scrollY>50),{passive:true});
-
-// Trailer placeholder.
-const modal=document.querySelector('#modal');
-document.querySelector('#watchBtn').addEventListener('click',()=>{modal.classList.add('open');modal.setAttribute('aria-hidden','false')});
-document.querySelector('#closeModal').addEventListener('click',()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true')});
-
-
-// Galaxy starfield particles.
-const canvas=document.querySelector('#embers');
-const ctx=canvas.getContext('2d');
-let w=0,h=0,dpr=1,particles=[];
-const palette=[
-  '234,199,109', // gold
-  '255,245,220', // warm white
-  '146,169,255', // blue
-  '191,139,255'  // violet
-];
-function resize(){
-  dpr=Math.min(devicePixelRatio||1,2);w=innerWidth;h=innerHeight;
-  canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.width=w+'px';canvas.style.height=h+'px';
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  particles=Array.from({length:Math.min(155,Math.floor(w/9))},()=>({
-    x:Math.random()*w,
-    y:Math.random()*h,
-    r:Math.random()*1.7+.25,
-    vy:Math.random()*.14+.015,
-    vx:(Math.random()-.5)*.06,
-    a:Math.random()*.65+.08,
-    tw:Math.random()*Math.PI*2,
-    c:palette[Math.floor(Math.random()*palette.length)]
-  }));
-}
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  for(const p of particles){
-    p.y-=p.vy;p.x+=p.vx;p.tw += .02;
-    if(p.y<-8){p.y=h+8;p.x=Math.random()*w}
-    if(p.x<-8)p.x=w+8;
-    if(p.x>w+8)p.x=-8;
-    const alpha=p.a*(0.65+Math.sin(p.tw)*0.35);
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(${p.c},${alpha})`;
-    ctx.shadowBlur=10;
-    ctx.shadowColor=`rgba(${p.c},${alpha*.8})`;
-    ctx.fill();
-  }
-  ctx.shadowBlur=0;
-  requestAnimationFrame(draw);
-}
-resize();draw();window.addEventListener('resize',resize);
+(()=>{
+const $=(sel,root=document)=>root.querySelector(sel); const content=window.EE_CONTENT||{players:[],staff:[]};
+const safe=(s='')=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const resolveAsset = p => {if (!p) return ''; const value=String(p).trim(); if (/^(https?:\/\/|assets\/|\.\/)/i.test(value) && !/^javascript:/i.test(value)) return value; return '';};
+const playerGrid=$('#player-grid'); const players=(content.players||[]).slice(0,4);
+playerGrid.innerHTML=players.map((p,i)=>`<button type="button" class="player-card reveal" data-player="${i}" aria-label="Open trailer for ${safe(p.name)}">${resolveAsset(p.image)?`<img class="player-portrait" src="${safe(resolveAsset(p.image))}" alt="${safe(p.name)}">`:`<span class="player-arch"></span><img class="player-watermark" src="assets/exalted-era-logo.png" alt="">`}<span class="player-card-number">0${i+1} / THE CIRCLE</span><span class="player-card-status">${safe(p.status||'COMING SOON')}</span><span class="player-card-content"><span class="player-card-kicker">${safe(p.title||'THE ASCENSION')}</span><strong class="player-card-title">${safe(p.name||'TO BE REVEALED')}</strong><span class="player-card-action"><span>${resolveAsset(p.video)?'WATCH REVEAL TRAILER':'TRAILER COMING SOON'}</span><span class="player-play">▶</span></span></span></button>`).join('');
+const staffGrid=$('#staff-grid'); staffGrid.innerHTML=(content.staff||[]).map((person,i)=>`<article class="staff-card reveal"><div class="staff-photo">${resolveAsset(person.image)?`<img src="${safe(resolveAsset(person.image))}" alt="Portrait of ${safe(person.name)}" loading="lazy">`:`<span class="staff-placeholder">${String(i+1).padStart(2,'0')}</span>`}</div><div class="staff-meta"><span class="staff-index">THE PEOPLE / 0${i+1}</span><h3>${safe(person.name||'TO BE ANNOUNCED')}</h3><span class="staff-role">${safe(person.role||'STAFF')}</span><p class="staff-bio">${safe(person.bio||'')}</p>${resolveAsset(person.social)?`<a class="staff-social" target="_blank" rel="noopener noreferrer" href="${safe(resolveAsset(person.social))}">CONNECT ↗</a>`:''}</div></article>`).join('');
+const dialog=$('#video-dialog'),videoContent=$('#video-dialog-content'); const closeVideo=()=>{dialog.close();videoContent.replaceChildren()};
+$('#close-video').addEventListener('click',closeVideo);dialog.addEventListener('click',e=>{if(e.target===dialog)closeVideo()});
+playerGrid.addEventListener('click',e=>{const card=e.target.closest('[data-player]');if(!card)return;const p=players[+card.dataset.player];if(!p)return;const v=resolveAsset(p.video);videoContent.replaceChildren();if(!v){videoContent.innerHTML='<div class="empty-video"><img src="assets/exalted-era-logo.png" alt=""><h3>REVEAL COMING SOON.</h3><p>THIS PLAYER\'S TRAILER WILL PREMIERE HERE.</p></div>';}else if(/youtube\.com|youtu\.be/i.test(v)){let id='';try{const url=new URL(v);id=url.hostname.includes('youtu.be')?url.pathname.split('/')[1]:url.searchParams.get('v')||(url.pathname.match(/\/embed\/([^/]+)/)||[])[1]||'';}catch{}if(/^[A-Za-z0-9_-]{11}$/.test(id)){const f=document.createElement('iframe');f.src=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1`;f.title=`${p.name} trailer`;f.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';f.referrerPolicy='strict-origin-when-cross-origin';f.allowFullscreen=true;videoContent.appendChild(f);}else{videoContent.textContent='Invalid YouTube video URL. Check content.js.';}}else{const el=document.createElement('video');el.src=v;el.controls=true;el.autoplay=true;el.playsInline=true;videoContent.appendChild(el)}dialog.showModal();});
+const apply=$('#application-link');if(content.applicationUrl){const v=resolveAsset(content.applicationUrl);if(v){apply.href=v;$('.small-disclaimer')?.remove();}}
+const menu=$('#menu-toggle'),links=$('#mobile-links');menu.addEventListener('click',()=>{const open=links.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Close navigation':'Open navigation')});links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{links.classList.remove('open');menu.setAttribute('aria-expanded','false')}));
+const header=$('#site-header'),progress=$('#progress');let ticking=false;function updateScroll(){const total=document.documentElement.scrollHeight-innerHeight;progress.style.width=(total>0?Math.max(0,scrollY/total*100):0)+'%';header.classList.toggle('scrolled',scrollY>15);ticking=false}addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(updateScroll);ticking=true}},{passive:true});updateScroll();$('#year').textContent=new Date().getFullYear();
+if('IntersectionObserver' in window){const io=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');io.unobserve(entry.target)}}),{threshold:.08,rootMargin:'0px 0px -30px 0px'});document.querySelectorAll('.reveal').forEach(el=>io.observe(el));}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));}
+})();

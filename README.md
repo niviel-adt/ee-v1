@@ -1,31 +1,51 @@
-# ExaltedEra Crest Door V2
+# Exalted Era — V3 Cinematic Edition
 
-Static HTML/CSS/JS build with a scroll-driven cinematic entry.
+Inspired by **Zentry** (oversized typography, motion, immersive storytelling) and **Black Rose** (community esports sections and structured identity). This is an original Exalted Era design; no proprietary assets from those websites are used.
 
-## Main effect
-- ExaltedEra crest starts fully closed.
-- Scroll zooms toward the crest.
-- A gold energy seam builds in the middle.
-- The crest splits into left/right halves and opens like a door.
-- The camera pushes through and reveals the main website.
+## Preview
 
-## Run locally
-Open `index.html` in a browser. For best results, use a tiny local server such as VS Code Live Server.
+Open `index.html` in Chrome or Edge. Optional: run a local server with `python -m http.server 8000` then open `http://localhost:8000`.
 
-## Deploy
-Upload the folder to GitHub and deploy with Netlify, Vercel, GitHub Pages, or Railway static hosting.
+## Update the four player trailers
 
-## Customize
-- Logo: `assets/exaltedera-logo.png`
-- Copy/content: `index.html`
-- Styling: `styles.css`
-- Scroll animation: `script.js`
+Open `content.js` and fill in each player's `name`, `title`, `image`, and `video` fields.
 
+Example:
 
-Update: The portal intro now uses assets/door-crest.png as the animated split-door image. The rest of the site still uses assets/exaltedera-logo.png for branding.
+```js
+{name:'IGN HERE',title:'THE FIRST ARRIVAL',image:'assets/players/player-1.webp',video:'assets/trailers/player-1.mp4',line:'ONE OF THE CHOSEN',status:'REVEALED'}
+```
 
+- Add photos to `assets/players/` and `.mp4` files to `assets/trailers/`.
+- You can also use a full YouTube watch or embed URL as `video`.
+- If the video field is empty, the site clearly indicates that the trailer is **coming soon**, instead of faking playback.
 
-V4 update: the site has been recoded with a galaxy-themed background system, cosmic gradients, starfield particles, blue/violet nebula accents, and the transparent crest door asset.
+## Update staff profiles
 
+Edit `staff` in `content.js`, for example:
 
-V5 refinement: adjusted intro composition so the EXALTEDERA title stays fully above the crest, lowered/reduced the initial door size, added layered contact shadows and cleaner gold edge shadows, refined the galaxy halo, and smoothed the initial zoom.
+```js
+{name:'STAFF NAME',role:'TEAM MANAGER',image:'assets/staff/manager.webp',bio:'Managing the Circle.',social:'https://instagram.com/example'}
+```
+
+You can add more staff. Keep image file sizes optimized for web (WebP recommended).
+
+## Update the application
+
+Put your working application URL into `applicationUrl` in `content.js` after verifying it. The sample `mailto:` link is only a placeholder. This build does NOT include a functioning application backend and does NOT contain the existing original site's server-side features.
+
+## Deploy to GitHub / Railway
+
+1. Keep a backup of the current live repository and Railway settings.
+2. Put `index.html`, `style.css`, `script.js`, `content.js`, and `assets/` in your static site repository root.
+3. If Railway serves static HTML, verify its output directory and static hosting settings before switching the production domain.
+4. Test mobile navigation, player videos, staff images, application URL, and any custom domains in a staging environment first.
+
+This preview runs as a static site, with no build step. Fonts are served from Google Fonts when online; system fallbacks are provided.
+
+### Accessibility and performance
+
+- Native dialog for player reveals, with close button.
+- Reduced motion support, semantic navigation, responsive layout.
+- Static placeholders rather than fake player photos/videos.
+- For best loading speed, replace large crest PNG with a transparent optimized WebP after checking visual quality (original uploaded PNG is kept as requested).

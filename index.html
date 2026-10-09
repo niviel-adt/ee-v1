@@ -1,191 +1,53 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#050505" />
-  <meta name="description" content="ExaltedEra — Legacy lives on." />
-  <title>ExaltedEra</title>
-  <link rel="icon" href="assets/exaltedera-logo.png" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#070806">
+  <meta name="description" content="Exalted Era — a new standard of competitive community. The era is here. The exalted enters.">
+  <title>EXALTED ERA — The Era Is Here</title>
+  <link rel="icon" type="image/png" href="assets/exalted-era-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="noise" aria-hidden="true"></div>
-  <canvas id="embers" aria-hidden="true"></canvas>
-
-  <header class="topbar" id="topbar">
-    <a class="brand" href="#top" aria-label="ExaltedEra home">
-      <img src="assets/exaltedera-logo.png" alt="" />
-      <span>EXALTEDERA</span>
-    </a>
-    <nav class="desktop-nav" aria-label="Primary navigation">
-      <a href="#legacy">LEGACY</a>
-      <a href="#teams">TEAMS</a>
-      <a href="#events">EVENTS</a>
-      <a href="#stories">STORIES</a>
-      <a href="#join">COMMUNITY</a>
-    </nav>
-    <a class="btn primary" href="https://discord.gg/3Ywaegq6er" target="_blank" rel="noopener noreferrer">
-      JOIN ERA
-    </a>
+  <div class="progress" id="progress"></div>
+  <header class="site-header" id="site-header">
+    <a class="identity" href="#top" aria-label="Exalted Era home"><img src="assets/exalted-era-logo.png" alt="Exalted Era crest"><span>EXALTED<br><b>ERA</b></span></a>
+    <nav class="desktop-links" aria-label="Primary navigation"><a href="#story">OUR STORY</a><a href="#circle">THE CIRCLE</a><a href="#staff">STAFF</a><a href="#events">EVENTS</a></nav>
+    <a class="nav-join" href="#join">JOIN THE ERA <span aria-hidden="true">↗</span></a>
+    <button class="mobile-menu" id="menu-toggle" aria-controls="mobile-links" aria-expanded="false" aria-label="Open navigation"><span></span><span></span></button>
   </header>
-
-  <main>
-    <!-- CINEMATIC ENTRY -->
-    <section class="portal-section" id="top" aria-label="Enter ExaltedEra">
-      <div class="portal-sticky" id="portalSticky">
-        <div class="ambient-orbit orbit-a"></div>
-        <div class="ambient-orbit orbit-b"></div>
-        <div class="floor-glow"></div>
-
-        <div class="intro-copy" id="introCopy">
-          <span>WELCOME TO</span>
-          <h1>EXALTEDERA</h1>
-          <p>Legacy lives on.</p>
-        </div>
-
-        <div class="door-wrap" id="doorWrap" aria-hidden="true">
-          <div class="door-backlight"></div>
-          <div class="door-shadow"></div>
-
-          <!-- Both halves use the same crest image and clip it in half. -->
-          <div class="crest-half crest-left">
-            <img src="assets/door-crest.png" alt="" />
-          </div>
-          <div class="crest-half crest-right">
-            <img src="assets/door-crest.png" alt="" />
-          </div>
-
-          <div class="energy-line" id="energyLine"></div>
-          <div class="energy-core" id="energyCore">✦</div>
-        </div>
-
-        <div class="inside-glimpse" id="insideGlimpse" aria-hidden="true">
-          <div class="glimpse-content">
-            <span>THE ERA BEGINS</span>
-            <h2>RISE TOGETHER.<br>RULE FOREVER.</h2>
-            <div class="glimpse-line"></div>
-          </div>
-        </div>
-
-        <div class="scroll-hint" id="scrollHint">
-          <span>SCROLL TO ENTER</span>
-          <i></i>
-          <b></b>
-        </div>
-      </div>
+  <nav class="mobile-links" id="mobile-links" aria-label="Mobile navigation"><a href="#story">OUR STORY</a><a href="#circle">THE CIRCLE</a><a href="#staff">OUR STAFF</a><a href="#events">EVENTS</a><a href="#join">JOIN THE ERA</a></nav>
+  <main id="top">
+    <section class="hero" aria-label="Exalted Era introduction">
+      <div class="hero-noise" aria-hidden="true"></div>
+      <div class="hero-architecture" aria-hidden="true"><div class="arch arch-out"></div><div class="arch arch-mid"></div><div class="arch arch-in"></div><div class="ground-beam"></div><div class="light-column"></div></div>
+      <div class="hero-top"><span><i class="live-dot"></i> INDEPENDENT ESPORTS COLLECTIVE</span><span>EST. MMXXVI &nbsp; / &nbsp; VALORANT MOBILE</span></div>
+      <div class="hero-emblem reveal"><div class="crest-halo"></div><img src="assets/exalted-era-logo.png" alt="Official Exalted Era gold emblem"></div>
+      <div class="hero-headline reveal"><span class="hero-intro">WELCOME TO THE NEXT CHAPTER</span><h1>THE ERA<br><em>IS HERE<span class="punctuation">.</span></em></h1><p>THE EXALTED ENTERS.</p></div>
+      <div class="hero-bottom"><span class="coords">PHILIPPINES <span class="hero-divider"></span> BEYOND THE ORDINARY</span><a href="#story" aria-label="Scroll to discover">SCROLL TO DISCOVER <span class="scroll-ball">↓</span></a><span>01 / 05</span></div>
     </section>
-
-    <!-- TRUE WEBSITE -->
-    <section class="site" id="site">
-      <section class="hero section-pad" id="legacy">
-        <div class="hero-graphic reveal">
-          <div class="hero-ring"></div>
-          <img src="assets/exaltedera-logo.png" alt="ExaltedEra crest" />
-        </div>
-        <div class="hero-copy reveal">
-          <span class="kicker">LEGACY LIVES ON</span>
-          <h2>AN ERA<br><em>WORTH REMEMBERING.</em></h2>
-          <p>ExaltedEra is built for competition, culture, and the people who want to leave a mark long after the match ends.</p>
-          <div class="actions">
-            <a class="solid-btn" href="#teams">ENTER THE ERA <span>↗</span></a>
-            <button class="ghost-btn" id="watchBtn" type="button">WATCH TRAILER</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="ticker" aria-label="ExaltedEra motto">
-        <div class="ticker-track">
-          <span>EXALTEDERA ✦ LEGACY LIVES ON ✦ FOR GLORY ✦ FOR THE ERA ✦ </span>
-          <span>EXALTEDERA ✦ LEGACY LIVES ON ✦ FOR GLORY ✦ FOR THE ERA ✦ </span>
-        </div>
-      </section>
-
-      <section class="section-pad" id="teams">
-        <div class="section-heading reveal">
-          <span class="kicker">OUR DIVISIONS</span>
-          <h2>BUILT TO<br>COMPETE.</h2>
-        </div>
-        <div class="card-grid">
-          <article class="era-card reveal tilt">
-            <span class="card-no">01</span>
-            <div class="card-mark"><img src="assets/exaltedera-logo.png" alt="" /></div>
-            <div class="card-copy"><small>VALORANT MOBILE</small><h3>EXALTED<br>VANGUARD</h3><a href="#join">VIEW ROSTER ↗</a></div>
-          </article>
-          <article class="era-card reveal tilt">
-            <span class="card-no">02</span>
-            <div class="card-mark"><img src="assets/exaltedera-logo.png" alt="" /></div>
-            <div class="card-copy"><small>CONTENT</small><h3>ERA<br>CREATIVE</h3><a href="#stories">MEET CREATORS ↗</a></div>
-          </article>
-          <article class="era-card reveal tilt">
-            <span class="card-no">03</span>
-            <div class="card-mark"><img src="assets/exaltedera-logo.png" alt="" /></div>
-            <div class="card-copy"><small>COMMUNITY</small><h3>EXALTED<br>LEGION</h3><a href="#join">JOIN THE ERA ↗</a></div>
-          </article>
-        </div>
-      </section>
-
-      <section class="event-section section-pad" id="events">
-        <div class="event-panel reveal">
-          <div class="event-copy">
-            <span class="kicker">NEXT EVENT</span>
-            <h2>ERA<br>CHAMPIONSHIP</h2>
-            <p>Where contenders become legends.</p>
-          </div>
-          <div class="countdown" id="countdown">
-            <div><strong>12</strong><span>DAYS</span></div>
-            <div><strong>08</strong><span>HRS</span></div>
-            <div><strong>47</strong><span>MINS</span></div>
-            <div><strong>32</strong><span>SECS</span></div>
-          </div>
-          <a class="solid-btn" href="#join">VIEW EVENT <span>↗</span></a>
-        </div>
-      </section>
-
-      <section class="stories section-pad" id="stories">
-        <div class="section-heading reveal">
-          <span class="kicker">FROM THE ERA</span>
-          <h2>STORIES.<br>MOMENTS.<br>LEGACY.</h2>
-        </div>
-        <div class="story-list">
-          <article class="story reveal"><span>01</span><div><h3>THE BIRTH OF EXALTEDERA</h3><p>Inside the identity and the philosophy behind the organization.</p></div><b>↗</b></article>
-          <article class="story reveal"><span>02</span><div><h3>ROAD TO THE NEXT TITLE</h3><p>Preparation, pressure, and the pursuit of a championship.</p></div><b>↗</b></article>
-          <article class="story reveal"><span>03</span><div><h3>BEYOND COMPETITION</h3><p>A home for competitors, creators, and everyone building the era.</p></div><b>↗</b></article>
-        </div>
-      </section>
-
-      <section class="join section-pad" id="join">
-        <div class="join-mark reveal"><img src="assets/exaltedera-logo.png" alt="" /></div>
-        <div class="join-copy reveal">
-          <span class="kicker">THIS IS YOUR INVITATION</span>
-          <h2>ENTER<br>THE ERA.</h2>
-          <p>Follow the teams, join the community, and be part of what comes next.</p>
-          <a class="solid-btn" href="#top">JOIN EXALTEDERA <span>↗</span></a>
-        </div>
-      </section>
-
-      <footer>
-        <a class="footer-brand" href="#top"><img src="assets/exaltedera-logo.png" alt="" /><span>EXALTEDERA</span></a>
-        <p>FOR GLORY. FOR THE ERA.</p>
-        <p>© 2026 EXALTEDERA</p>
-      </footer>
+    <div class="ticker" aria-label="Exalted Era identity"><div class="ticker-inner" aria-hidden="true"><span>THE ERA IS HERE <b>✦</b> BUILT DIFFERENT <b>✦</b> EARN YOUR PLACE <b>✦</b> THE ERA IS HERE <b>✦</b> BUILT DIFFERENT <b>✦</b> EARN YOUR PLACE <b>✦</b></span><span>THE ERA IS HERE <b>✦</b> BUILT DIFFERENT <b>✦</b> EARN YOUR PLACE <b>✦</b> THE ERA IS HERE <b>✦</b> BUILT DIFFERENT <b>✦</b> EARN YOUR PLACE <b>✦</b></span></div></div>
+    <section class="story" id="story">
+      <div class="section-top dark-top"><span><b class="tiny-cross">✳</b> 01 / OUR PHILOSOPHY</span><span>EXALTED ERA — THE MANIFESTO</span></div>
+      <div class="story-layout"><div class="story-left reveal"><div class="eyebrow story-label"><span class="overline"></span> WE DON'T FOLLOW ERAS. WE CREATE THEM.</div><h2>NOT HERE<br>TO <i>FIT IN.</i><br>HERE TO<br><span>STAND OUT.</span></h2></div><div class="story-right reveal"><div class="story-crest"><img src="assets/exalted-era-logo.png" alt="" loading="lazy"></div><p>Exalted Era is more than an esports team. It's an invitation-only circle built on discipline, ambition, and the belief that excellence is earned — never given.</p><a class="underline-link" href="#circle">DISCOVER THE CIRCLE <span>↗</span></a></div></div><div class="story-stamp">EXCELLENCE IS NOT AN ACCIDENT <span>✳</span> EST. 2026</div>
     </section>
+    <section class="circle" id="circle">
+      <div class="section-top"><span><b class="tiny-cross">✳</b> 02 / THE ASCENSION</span><span>FOUR ENTER. AN ERA BEGINS.</span></div>
+      <div class="circle-heading reveal"><div><p class="kicker">THE NEXT GENERATION</p><h2>MEET THE<br><i>CHOSEN.</i></h2></div><div class="circle-heading-right"><span class="giant-four">04<span>↗</span></span><p>FOUR NEW MEMBERS.<br>FOUR UNTOLD STORIES.<br>ONE CIRCLE.</p></div></div>
+      <div class="player-grid" id="player-grid" aria-live="polite"></div>
+      <div class="section-under"><span>THE CIRCLE / 2026</span><span>SELECTED. NOT ASSIGNED.</span><a href="#staff">MEET THE PEOPLE BEHIND IT <span>↓</span></a></div>
+    </section>
+    <section class="cinematic-break" aria-label="Exalted Era legacy"><div class="break-rings" aria-hidden="true"></div><div class="break-light"></div><img src="assets/exalted-era-logo.png" alt="" class="break-logo" loading="lazy"><div class="break-inner reveal"><p>THIS IS NOT A PLACE FOR EVERYONE.</p><h2>LEGENDS<br>ARE <i>MADE.</i></h2><span>EXALTED ERA / THE LEGACY STARTS NOW.</span></div></section>
+    <section class="staff" id="staff"><div class="section-top dark-top"><span><b class="tiny-cross">✳</b> 03 / THE PEOPLE</span><span>THE MINDS BEHIND THE ERA</span></div><div class="staff-intro reveal"><div><p class="kicker">A VISION BUILT TOGETHER</p><h2>THE ONES<br><i>BEHIND</i> IT.</h2></div><p>Every era needs its architects. Meet the team helping shape our players, our culture, and what's next.</p></div><div class="staff-grid" id="staff-grid"></div></section>
+    <section class="events" id="events"><div class="section-top"><span><b class="tiny-cross">✳</b> 04 / THE COMPETITION</span><span>COMPETE. CONNECT. ASCEND.</span></div><div class="events-grid"><div class="events-visual"><div class="arena-rings"><span>EE</span></div><div class="events-float">THE ARENA<br><span>AWAITS</span><b>↗</b></div></div><div class="events-content reveal"><p class="kicker">WHAT WE BUILD TOGETHER</p><h2>THE FIGHT<br>FOR <i>MORE.</i></h2><p>From community showdowns to competitive tournaments, our arena is where ambition becomes legacy.</p><div class="event-row"><span>01</span><div><b>COMMUNITY SHOWDOWNS</b><small>Competitive play, forged through community.</small></div><span>↗</span></div><div class="event-row"><span>02</span><div><b>1V1 TOURNAMENTS</b><small>One player. One opponent. One moment.</small></div><span>↗</span></div><a class="outline-button" href="#join">STAY CONNECTED <span>↗</span></a></div></div></section>
+    <section class="values" id="code"><div class="section-top dark-top"><span><b class="tiny-cross">✳</b> 05 / THE STANDARD</span><span>WHAT MAKES US EXALTED</span></div><div class="values-heading reveal"><p class="kicker">OUR CODE</p><h2>MORE THAN<br><i>A NAME.</i></h2></div><div class="values-list"><article><span>01 /</span><h3>DISCIPLINE</h3><p>Talent starts the journey. Consistency earns the place.</p><b>↗</b></article><article><span>02 /</span><h3>BROTHERHOOD</h3><p>The strongest circle is built on trust and respect.</p><b>↗</b></article><article><span>03 /</span><h3>LEGACY</h3><p>Our standard is measured by what we leave behind.</p><b>↗</b></article></div></section>
+    <section class="join" id="join"><div class="join-glow"></div><div class="join-inner reveal"><p class="kicker">THE NEXT CHAPTER IS WAITING</p><h2>YOUR ERA<br><i>STARTS HERE.</i></h2><p class="join-desc">The door doesn't open for everyone. But every legacy begins with someone who dared to knock.</p><a class="join-button" id="application-link" href="mailto:hello@exaltedera.com?subject=Exalted%20Era%20Application">REQUEST AN INVITATION <span>↗</span></a><p class="small-disclaimer">APPLICATION LINK IS A PLACEHOLDER — CONNECT A VERIFIED FORM BEFORE LAUNCH.</p></div><img class="join-watermark" src="assets/exalted-era-logo.png" alt="" loading="lazy"></section>
   </main>
-
-  <div class="modal" id="modal" aria-hidden="true">
-    <button id="closeModal" aria-label="Close">×</button>
-    <div class="modal-card">
-      <span>EXALTEDERA</span>
-      <h2>TRAILER PLACEHOLDER</h2>
-      <p>Replace this with your YouTube embed or MP4 video.</p>
-    </div>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
+  <footer class="footer"><div class="footer-top"><div class="footer-brand"><img src="assets/exalted-era-logo.png" alt=""><span>EXALTED ERA</span></div><div class="footer-nav"><a href="#top">HOME</a><a href="#circle">THE CIRCLE</a><a href="#staff">STAFF</a><a href="#events">EVENTS</a></div></div><div class="footer-big">EXALTED<span>ERA.</span></div><div class="footer-bottom"><span>© <span id="year"></span> EXALTED ERA. ALL RIGHTS RESERVED.</span><span>THE ERA IS HERE. THE EXALTED ENTERS.</span><a href="#top">BACK TO TOP ↑</a></div></footer>
+  <dialog class="video-dialog" id="video-dialog" aria-label="Player reveal trailer"><button id="close-video" class="close-video" aria-label="Close trailer">✕</button><div id="video-dialog-content"></div></dialog>
+  <script src="content.js"></script><script src="script.js"></script>
+</body></html>
