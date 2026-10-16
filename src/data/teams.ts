@@ -1,6 +1,10 @@
 import type {Member} from './staff';
 
 const playerOverrides: Record<string, Partial<Member>> = {
+  '01': {
+    name: 'Ceazar',
+    image: 'https://drive.google.com/thumbnail?id=1qRT-UFsZxP-fqDGuNA9oA-ywU1i1eWt-&sz=w1600&v=ceazar-1',
+  },
   '10': {
     name: 'Simetra',
     image: 'https://drive.google.com/thumbnail?id=16gyVlLCQgTrm3dh9-HmbEVTZvg_33bY6&sz=w1600&v=simetra-1',
