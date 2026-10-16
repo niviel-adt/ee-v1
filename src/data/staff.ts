@@ -1,0 +1,2 @@
+export type Member={name:string;number:string;position?:string;image?:string;bio?:string};
+export const staff:Member[]=[{name:'Xia',number:'01',position:'Operations',image:'https://drive.google.com/thumbnail?id=1H7_ZazXtBZ5Z41VgAi6nfN137uwr41C5&sz=w1600&v=full-color-2'},{name:'Avior',number:'02',position:'Internal',image:'https://drive.google.com/thumbnail?id=1KPwWZ0AfjUGeg0Qi5i3HFhd9Bz2HAaAw&sz=w1600&v=full-color-2'},{name:'Wasabi',number:'03',position:'External',image:'https://drive.google.com/thumbnail?id=1ZP9z2Ba1GlxDxjm4sk1vkuA1sEHoKX0x&sz=w1600&v=full-color-2'}];
