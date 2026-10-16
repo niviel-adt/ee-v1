@@ -1,1 +1,17 @@
-import type {Member} from './staff';export const teams:{id:string;name:string;members:Member[]}[]=[0,1].map(t=>({id:`team-${t+1}`,name:`TEAM 0${t+1}`,members:Array.from({length:5},(_,i)=>({name:`PLAYER ${String(t*5+i+1).padStart(2,'0')}`,number:String(t*5+i+1).padStart(2,'0')}))}));
+import type {Member} from './staff';
+
+const playerOverrides: Record<string, Partial<Member>> = {
+  '06': {
+    name: 'Alfonso',
+    image: 'https://drive.google.com/thumbnail?id=126qmZbkbXAX0VZ-WLtZdMVgtNOQgei-C&sz=w1600&v=alfonso-1',
+  },
+};
+
+export const teams: {id: string; name: string; members: Member[]}[] = [0, 1].map(t => ({
+  id: `team-${t + 1}`,
+  name: `TEAM 0${t + 1}`,
+  members: Array.from({length: 5}, (_, i) => {
+    const number = String(t * 5 + i + 1).padStart(2, '0');
+    return {name: `PLAYER ${number}`, number, ...playerOverrides[number]};
+  }),
+}));
