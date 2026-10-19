@@ -26,3 +26,8 @@ Edit `src/data/staff.ts`, `teams.ts`, and `site.ts`. Staff: Xia (Operations), Av
 The emblem uses a transparent PNG rendered white through CSS. Portraits display in full color. Team selection, member dialogs, expandable values, navigation tracking, and reduced motion are supported.
 
 Legacy logo assets remain in the repository; prior website source remains available in Git history. The private design-review Site has its own separate deployment configuration and is not tied to this repository.
+
+## Constellation roster
+The Players section uses four constellations with five positions each. Teams 01/02 read the current player data; Teams 03/04 show explicit placeholders until details are supplied. Map controls include pan, zoom, reset, a manual team tour, isolation, and quick profiles. On mobile, Pan Map enables map gestures; Done Panning restores page scrolling. Keyboard +/−/0 controls zoom/reset; arrows move through stars. Reduced motion is respected.
+
+The map markup, styles, and lifecycle-managed runtime live in `src/components/constellation/`. `PlayersSection.tsx` mounts them in an isolated styling root so existing page sections keep their styling. Continue editing players in `src/data/teams.ts`.

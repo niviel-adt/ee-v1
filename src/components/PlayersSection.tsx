@@ -1,1 +1,17 @@
-import {useState} from 'react';import {AnimatePresence,motion} from 'motion/react';import {teams} from '../data/teams';import {Label,MemberCard,Reveal} from './Sections';export function PlayersSection(){const [active,setActive]=useState(0);return <section id="players" className="section players"><Label number="04">THE ROSTER</Label><Reveal><div className="section-heading"><h2>MEET THE<br/><span>PLAYERS.</span></h2><p>Individual talent.<br/>Collective strength.</p></div><div className="roster-toolbar"><div role="tablist" aria-label="Select roster" className="team-tabs">{teams.map((t,i)=><button key={t.id} role="tab" id={`${t.id}-tab`} aria-selected={i===active} aria-controls="roster-panel" tabIndex={i===active?0:-1} onClick={()=>setActive(i)} onKeyDown={e=>{if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?teams.length-1:(active+(e.key==='ArrowRight'?1:-1)+teams.length)%teams.length;setActive(n);document.getElementById(`${teams[n].id}-tab`)?.focus()}}}>{t.name}<span>05</span></button>)}</div><span className="roster-game">VALORANT MOBILE / MAIN ROSTER</span></div><div role="tabpanel" id="roster-panel" aria-labelledby={`${teams[active].id}-tab`} tabIndex={0}><AnimatePresence mode="wait"><motion.div key={active} className="players-grid" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:.2}}>{teams[active].members.map(m=><MemberCard key={m.number} member={m} player/>)}</motion.div></AnimatePresence></div><div className="roster-note"><span>FIVE PLAYERS. ONE PURPOSE.</span><span>Official player profiles coming soon.</span></div></Reveal></section>}
+import {useEffect,useRef} from 'react';
+import {teams} from '../data/teams';
+import markup from './constellation/markup.html?raw';
+import styles from './constellation/style.css?inline';
+import {mountConstellation} from './constellation/runtime.js';
+
+export function PlayersSection(){
+ const host=useRef<HTMLDivElement>(null);
+ useEffect(()=>{
+  if(!host.current)return;
+  const shadow=host.current.shadowRoot||host.current.attachShadow({mode:'open'});
+  shadow.innerHTML=`<style>${styles}</style>${markup}`;
+  const cleanup=mountConstellation(shadow,teams);
+  return ()=>{cleanup();shadow.replaceChildren()};
+ },[]);
+ return <section id="players" aria-label="Exalted Era player constellations" style={{borderTop:'1px solid #ffffff15'}}><div ref={host}/></section>;
+}
