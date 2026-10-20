@@ -40,7 +40,7 @@ players.forEach((p,i)=>{const b=document.createElement('button');b.className='st
 function select(i){selected=i;$('#quick-name').textContent=players[i].name;const p=players[i];$('#index').textContent=String(i+1).padStart(2,'0')+' / 20';$('#name').textContent=p.name;$('#team-name').textContent=`TEAM 0${p.team+1} / ${p.reserved?'PLAYER '+p.number+' / TO BE REVEALED':'PLAYER '+p.number}`;$('#code').textContent=p.reserved?'RESERVED':'EE / '+p.number;$('#description').textContent=p.reserved?'Team 0'+(p.team+1)+' · Player '+p.number+'. Name and portrait to be revealed.':'One star in the collective. Select View Profile to explore this player.';$('#photo-status').textContent=p.reserved?'FUTURE PLAYER':'PORTRAIT LOADING';const img=$('#portrait');img.hidden=true;img.onload=()=>{img.hidden=false};img.onerror=()=>{img.hidden=true;$('#photo-status').textContent='PORTRAIT UNAVAILABLE'};if(p.image){img.referrerPolicy='no-referrer';img.src=p.image}else img.removeAttribute('src');$('#profile').innerHTML=(p.reserved?'EXPLORE THIS POSITION':'VIEW PROFILE')+' <span>↗</span>';$('#hint').textContent=p.reserved?`TEAM 0${p.team+1} · RESERVED POSITION`:`${p.name.toUpperCase()} · TEAM 0${p.team+1} · STAR SELECTED`;renderMap()}
 $$('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;$$('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));if(!visible().includes(selected))select(visible()[0]);else renderMap()});
 function step(d){const list=visible();select(list[(list.indexOf(selected)+d+list.length)%list.length])}$('#prev').onclick=()=>step(-1);$('#next').onclick=()=>step(1);
-$('#profile').onclick=()=>{const p=players[selected];$('#dialog-team').textContent=`TEAM 0${p.team+1} / ${p.reserved?'RESERVED POSITION':'PLAYER '+p.number}`;$('#dialog-name').textContent=p.name;$('#dialog-description').textContent=p.reserved?'This is Player '+p.number+' in Team 0'+(p.team+1)+'. The confirmed name and portrait have not been supplied yet.':`${p.name} is part of Exalted Era’s Team 0${p.team+1} Valorant Mobile roster. Full biography and role details have not been supplied yet.`;$('#dialog-photo').hidden=!p.image;const image=$('#dialog-image'),status=$('#dialog-image-status');image.hidden=true;status.hidden=false;status.textContent=p.image?'Loading portrait…':'Portrait to be revealed';image.alt=p.name+' — Team 0'+(p.team+1)+' player portrait';image.onload=()=>{image.hidden=false;status.hidden=true};image.onerror=()=>{image.hidden=true;status.hidden=false;status.textContent='The portrait could not load from Google Drive. Use Open Original Portrait below.'};if(p.image){image.src=p.image;const id=new URL(p.image).searchParams.get('id');$('#dialog-photo').href=id?'https://drive.google.com/file/d/'+encodeURIComponent(id)+'/view':p.image}else{image.removeAttribute('src')}$('#dialog').showModal()};$('#close').onclick=()=>$('#dialog').close();$('#dialog').onclick=e=>{if(e.target===$('#dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}};
+$('#profile').onclick=()=>{const p=players[selected];$('#dialog-team').textContent=`TEAM 0${p.team+1} / ${p.reserved?'RESERVED POSITION':'PLAYER '+p.number}`;$('#dialog-name').textContent=p.name;$('#dialog-description').textContent=p.reserved?'This is Player '+p.number+' in Team 0'+(p.team+1)+'. The confirmed name and portrait have not been supplied yet.':`${p.name} is part of Exalted Era’s Team 0${p.team+1} Valorant Mobile roster. Full biography and role details have not been supplied yet.`;$('#dialog-photo').hidden=!p.image;const image=$('#dialog-image'),status=$('#dialog-image-status');image.hidden=true;status.hidden=false;status.textContent=p.image?'Loading portrait…':'Portrait to be revealed';image.alt=p.name+' — Team 0'+(p.team+1)+' player portrait';image.onload=()=>{image.hidden=false;status.hidden=true};image.onerror=()=>{image.hidden=true;status.hidden=false;status.textContent='The portrait could not load. Try opening the portrait below.'};if(p.image){image.src=p.image;const id=new URL(p.image,window.location.origin).searchParams.get('id');$('#dialog-photo').href=id?'https://drive.google.com/file/d/'+encodeURIComponent(id)+'/view':p.image}else{image.removeAttribute('src')}$('#dialog').showModal()};$('#close').onclick=()=>$('#dialog').close();$('#dialog').onclick=e=>{if(e.target===$('#dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}};
 const motionQuery=matchMedia('(prefers-reduced-motion: reduce)');
 const canvas=$('#sky'),ctx=canvas.getContext('2d');let width=0,height=0,tick=0,frame=0;const dust=Array.from({length:120},(_,i)=>({x:Math.sin(i*127.1)*43758.5453%1,y:Math.sin(i*311.7)*12345.678%1,r:i%9===0?1.1:.5}));
 function resize(){width=canvas.clientWidth;height=canvas.clientHeight;const d=Math.min(devicePixelRatio||1,2);canvas.width=width*d;canvas.height=height*d;ctx.setTransform(d,0,0,d,0,0);renderMap();draw()}
@@ -121,6 +121,47 @@ $('#tour-start').addEventListener('click',()=>{hidePreview();focusedTeam=null;$(
 addEventListener('keydown',e=>{if(e.key==='Escape'){hidePreview();results.hidden=true}});
 const dismissSearch=e=>{if(!e.target.closest('.search-wrap'))results.hidden=true};root.addEventListener('pointerdown',dismissSearch);cleanups.push(()=>root.removeEventListener('pointerdown',dismissSearch));
 cleanups.push(()=>clearTimeout(hidePreviewTimer));
+
+
+// Player numbers are stable across display-name changes; reserved positions have no public profile.
+const profileDialog=$('#dialog');
+const originalOpenProfile=$('#profile').onclick;
+const profileUrl=p=>{const url=new URL(window.location.href);url.searchParams.set('player',p.number);url.hash='players';return url};
+let openingFromUrl=false;
+$('#profile').onclick=()=>{
+ const p=players[selected];
+ $('#share-status').textContent='';$('#profile-link').hidden=true;$('#copy-profile').hidden=p.reserved;
+ if(!p.reserved&&!openingFromUrl){
+  const url=profileUrl(p);
+  if(window.location.href!==url.href)history.pushState({...history.state,eePlayerProfile:true},'',url);
+ }
+ originalOpenProfile();
+};
+function removeProfileUrl(){
+ const url=new URL(window.location.href);
+ if(!url.searchParams.has('player'))return;
+ if(history.state?.eePlayerProfile){history.back()}else{url.searchParams.delete('player');history.replaceState(history.state,'',url)}
+}
+profileDialog.addEventListener('close',()=>{if(!openingFromUrl)removeProfileUrl()});
+$('#copy-profile').onclick=async()=>{
+ const url=profileUrl(players[selected]).href;
+ try{await navigator.clipboard.writeText(url);$('#share-status').textContent='Profile link copied.'}
+ catch{const field=$('#profile-link');field.value=url;field.hidden=false;field.focus();field.select();$('#share-status').textContent='Copy the selected profile link.'}
+};
+function syncProfileUrl(){
+ const number=new URL(window.location.href).searchParams.get('player');
+ const index=players.findIndex(p=>!p.reserved&&p.number===number);
+ openingFromUrl=true;
+ try{
+  if(index>=0){choosePlayer(index);$('#profile').click()}
+  else if(profileDialog.open){profileDialog.close();buttons[selected].focus({preventScroll:true})}
+ }finally{openingFromUrl=false}
+}
+addEventListener('popstate',syncProfileUrl);
+addEventListener('hashchange',syncProfileUrl);
+// Wait until all controls are initialized, including React StrictMode's remount.
+let profileUrlFrame=requestAnimationFrame(syncProfileUrl);
+cleanups.push(()=>cancelAnimationFrame(profileUrlFrame));
 
 return ()=>{cancelAnimationFrame(frame);cleanups.forEach(fn=>fn());motionQuery.removeEventListener('change',motionChange);const dialog=$('#dialog');if(dialog?.open)dialog.close();};
 }
