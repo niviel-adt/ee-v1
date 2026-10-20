@@ -61,7 +61,7 @@ function syncSelection(){if(isolated)applyFilter(String(players[selected].team))
 $('#isolate').onclick=()=>{isolated=!isolated;$('#isolate').setAttribute('aria-pressed',String(isolated));$('#isolate').textContent=isolated?'SHOW ALL TEAMS':'ISOLATE TEAM';applyFilter(isolated?String(players[selected].team):'all')};
 $$('[data-filter]').forEach(b=>b.addEventListener('click',()=>{isolated=false;$('#isolate').setAttribute('aria-pressed','false');$('#isolate').textContent='ISOLATE TEAM';endTour();resetCamera()}));
 $('#touch-pan').onclick=()=>{touchPan=!touchPan;chart.classList.toggle('touch-pan',touchPan);$('#touch-pan').setAttribute('aria-pressed',String(touchPan));$('#touch-pan').textContent=touchPan?'DONE PANNING':'PAN MAP'};
-chart.addEventListener('pointerdown',e=>{if(e.target.closest('button,a,#tour-panel')||(e.pointerType==='touch'&&!touchPan))return;dragging={x:e.clientX,y:e.clientY,px:panX,py:panY};chart.setPointerCapture(e.pointerId);chart.classList.add('dragging')});
+chart.addEventListener('pointerdown',e=>{if(e.target.closest('button,a,#tour-panel,#hover-preview')||(e.pointerType==='touch'&&!touchPan))return;dragging={x:e.clientX,y:e.clientY,px:panX,py:panY};chart.setPointerCapture(e.pointerId);chart.classList.add('dragging')});
 chart.addEventListener('pointermove',e=>{if(!dragging)return;panX=dragging.px+e.clientX-dragging.x;panY=dragging.py+e.clientY-dragging.y;camera()});
 function release(){dragging=null;chart.classList.remove('dragging')}chart.addEventListener('pointerup',release);chart.addEventListener('pointercancel',release);
 chart.addEventListener('keydown',e=>{if(e.target.closest('.star'))return;if(e.key==='+'||e.key==='='){e.preventDefault();setZoom(zoom+.3)}if(e.key==='-'){e.preventDefault();setZoom(zoom-.3)}if(e.key==='0'){e.preventDefault();resetCamera()}});
@@ -72,6 +72,55 @@ function endTour(){tourStep=-1;$('#tour-panel').hidden=true;$('#tour-start').tex
 $('#tour-start').onclick=()=>{if(tourStep<0){showTour(0)}else{endTour();resetCamera()}};$('#tour-prev').onclick=()=>showTour(tourStep-1);$('#tour-next').onclick=()=>{if(tourStep===3){endTour();resetCamera()}else showTour(tourStep+1)};$('#tour-close').onclick=()=>{endTour();resetCamera()};
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#dialog').open){endTour();touchPan=false;chart.classList.remove('touch-pan');$('#touch-pan').setAttribute('aria-pressed','false');$('#touch-pan').textContent='PAN MAP';resetCamera()}});
 addEventListener('resize',resetCamera);camera();
+
+
+// Player discovery and team focus.
+let hoverIndex=0,hidePreviewTimer=0,focusedTeam=null;
+const preview=$('#hover-preview'),search=$('#player-search'),results=$('#search-results');
+function hidePreview(){clearTimeout(hidePreviewTimer);preview.hidden=true;}
+function scheduleHide(){clearTimeout(hidePreviewTimer);hidePreviewTimer=setTimeout(hidePreview,180)}
+function showPreview(i){
+ clearTimeout(hidePreviewTimer);hoverIndex=i;const player=players[i];$('#hover-name').textContent=player.name;$('#hover-team').textContent=`TEAM 0${player.team+1} / PLAYER ${player.number}`;
+ const image=$('#hover-image'),status=$('#hover-image-status');image.hidden=true;status.hidden=false;status.textContent=player.image?'PORTRAIT LOADING':'PORTRAIT TO BE REVEALED';image.alt=player.name+' portrait';image.onload=()=>{image.hidden=false;status.hidden=true};image.onerror=()=>{image.hidden=true;status.hidden=false;status.textContent='PORTRAIT UNAVAILABLE'};if(player.image){image.referrerPolicy='no-referrer';if(image.src!==player.image)image.src=player.image;else if(image.complete&&image.naturalWidth){image.hidden=false;status.hidden=true}}else image.removeAttribute('src');
+ preview.hidden=false;const r=buttons[i].getBoundingClientRect(),c=chart.getBoundingClientRect();const width=preview.offsetWidth,height=preview.offsetHeight;
+ let x=r.right-c.left+10,y=r.top-c.top-height*.3;if(x+width>c.width-10)x=r.left-c.left-width-10;
+ preview.style.left=Math.max(8,Math.min(c.width-width-8,x))+'px';preview.style.top=Math.max(8,Math.min(c.height-height-8,y))+'px';
+}
+buttons.forEach((button,i)=>{
+ button.setAttribute('aria-controls','hover-preview');
+ button.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch'&&!dragging)showPreview(i)});
+ button.addEventListener('pointerleave',e=>{if(e.pointerType!=='touch')scheduleHide()});
+ button.addEventListener('focus',()=>showPreview(i));
+ button.addEventListener('blur',e=>{if(!preview.contains(e.relatedTarget))scheduleHide()});
+ button.addEventListener('click',()=>showPreview(i));
+});
+preview.addEventListener('pointerenter',()=>clearTimeout(hidePreviewTimer));preview.addEventListener('pointerleave',e=>{if(e.pointerType!=='touch')scheduleHide()});preview.addEventListener('focusout',e=>{if(!preview.contains(e.relatedTarget))scheduleHide()});
+$('#hover-profile').onclick=()=>{select(hoverIndex);syncSelection();hidePreview();$('#profile').click()};
+chart.addEventListener('pointerdown',e=>{if(!e.target.closest('.star,#hover-preview'))hidePreview()});
+function matches(){const q=search.value.trim().toLowerCase();return q?players.map((p,i)=>({p,i})).filter(({p})=>p.name.toLowerCase().includes(q)||('player '+p.number).includes(q)):[]}
+function renderSearch(){
+ const query=search.value.trim();results.replaceChildren();if(!query){results.hidden=true;$('#search-status').textContent='';buttons.forEach(b=>b.classList.remove('search-match'));return}
+ const found=matches();$('#search-status').textContent=found.length?`${found.length} player${found.length===1?'':'s'} found`:'No matching players. Try an IGN or player number.';results.hidden=false;
+ buttons.forEach((b,i)=>b.classList.toggle('search-match',found.some(x=>x.i===i)));
+ found.forEach(({p,i})=>{const b=document.createElement('button');b.className='search-result';b.innerHTML=`<span>${p.name}</span><small>TEAM 0${p.team+1} / ${p.number}</small>`;b.onclick=()=>choosePlayer(i);b.onkeydown=e=>{const all=[...results.querySelectorAll('button')],n=all.indexOf(b);if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();all[(n+(e.key==='ArrowDown'?1:-1)+all.length)%all.length].focus()}if(e.key==='Escape'){results.hidden=true;search.focus()}};results.append(b)});
+}
+function choosePlayer(i){
+ hidePreview();endTour();focusedTeam=null;$('#team-focus').hidden=true;isolated=false;$('#isolate').setAttribute('aria-pressed','false');$('#isolate').textContent='ISOLATE TEAM';applyFilter('all');select(i);const point=xy(players[i]);centerPoint(point.x,point.y,innerWidth<=700?1.3:1.7);results.hidden=true;$('#search-status').textContent=`${players[i].name} selected in Team 0${players[i].team+1}`;chart.scrollIntoView({behavior:motionQuery.matches?'instant':'smooth',block:'nearest'});buttons[i].focus({preventScroll:true});hidePreview();
+}
+search.addEventListener('input',renderSearch);search.addEventListener('focus',()=>{if(search.value.trim())renderSearch()});search.addEventListener('keydown',e=>{const first=results.querySelector('button');if(e.key==='ArrowDown'&&first){e.preventDefault();first.focus()}if(e.key==='Enter'&&matches().length){e.preventDefault();choosePlayer(matches()[0].i)}if(e.key==='Escape'){results.hidden=true}});
+$('#clear-search').onclick=()=>{search.value='';renderSearch();search.focus()};
+function focusTeam(team){
+ hidePreview();endTour();results.hidden=true;focusedTeam=team;isolated=false;$('#isolate').setAttribute('aria-pressed','false');$('#isolate').textContent='ISOLATE TEAM';applyFilter(String(team));if(players[selected].team!==team)select(team*5);
+ $('#team-focus').hidden=false;$('#focus-kicker').textContent=`CONSTELLATION 0${team+1} / 05 PLAYER POSITIONS`;$('#focus-title').textContent=`TEAM 0${team+1}`;$('#focus-description').textContent=team<2?'Five players. One shared pursuit of excellence.':'The next chapter of the collective. Player names and portraits to be revealed.';
+ const roster=$('#focus-roster');roster.replaceChildren();players.forEach((p,i)=>{if(p.team!==team)return;const b=document.createElement('button');b.textContent=p.name;b.setAttribute('aria-label',`Select ${p.name} in focused team`);b.onclick=()=>{select(i);showPreview(i)};roster.append(b)});
+ const pts=Array.from({length:5},(_,slot)=>xy({team,slot}));centerPoint((Math.min(...pts.map(p=>p.x))+Math.max(...pts.map(p=>p.x)))/2,(Math.min(...pts.map(p=>p.y))+Math.max(...pts.map(p=>p.y)))/2,innerWidth<=700?1.12:1.5);
+}
+$('#focus-selected').onclick=()=>focusTeam(players[selected].team);$('#focus-exit').onclick=()=>{$('[data-filter="all"]').click();$('#focus-selected').focus()};
+$$('[data-filter]').forEach(b=>b.addEventListener('click',()=>{hidePreview();results.hidden=true;if(b.dataset.filter==='all'){focusedTeam=null;$('#team-focus').hidden=true}else focusTeam(Number(b.dataset.filter))}));
+$('#tour-start').addEventListener('click',()=>{hidePreview();focusedTeam=null;$('#team-focus').hidden=true;results.hidden=true});
+addEventListener('keydown',e=>{if(e.key==='Escape'){hidePreview();results.hidden=true}});
+const dismissSearch=e=>{if(!e.target.closest('.search-wrap'))results.hidden=true};root.addEventListener('pointerdown',dismissSearch);cleanups.push(()=>root.removeEventListener('pointerdown',dismissSearch));
+cleanups.push(()=>clearTimeout(hidePreviewTimer));
 
 return ()=>{cancelAnimationFrame(frame);cleanups.forEach(fn=>fn());motionQuery.removeEventListener('change',motionChange);const dialog=$('#dialog');if(dialog?.open)dialog.close();};
 }
