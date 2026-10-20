@@ -34,3 +34,6 @@ The map markup, styles, and lifecycle-managed runtime live in `src/components/co
 
 ## Shareable player profiles
 Open a confirmed player's profile and choose **Copy Profile Link**. Links use `?player=05#players` (Vinc, for example); player numbers are stable identifiers even if display names change. Opening or reloading the link selects the player and opens their profile. Browser Back/Forward restores profile navigation. Closing a directly linked profile removes the player parameter while preserving other query parameters. If clipboard access is unavailable, the dialog exposes a selectable link. Reserved positions do not offer sharing, and unknown player numbers do not open a profile. These links share the website's existing social preview; per-player preview images are not generated.
+
+## Recruitment
+The `/recruitment` page announces 10 open community slots and directs inquiries to the existing Discord invite. It includes preparation tips and an expandable FAQ; joining Discord does not submit an application or reserve a slot. Availability is static, so update `src/components/Recruitment.tsx` when the team fills slots or changes requirements. No form, database, or automated slot counter is configured. `npm start` uses the existing SPA fallback to serve direct page links.
