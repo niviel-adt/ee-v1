@@ -37,3 +37,10 @@ Open a confirmed player's profile and choose **Copy Profile Link**. Links use `?
 
 ## Recruitment
 The `/recruitment` page announces 10 open community slots and directs inquiries to the existing Discord invite. It includes preparation tips and an expandable FAQ; joining Discord does not submit an application or reserve a slot. Availability is static, so update `src/components/Recruitment.tsx` when the team fills slots or changes requirements. No form, database, or automated slot counter is configured. `npm start` uses the existing SPA fallback to serve direct page links.
+
+## Interactive design layer
+Shared motion helpers live in `src/components/fx.tsx` (scroll reveals, staggered entrances, masked headline reveals, tilt/glow cards, magnetic buttons, count-up numbers, marquee) and the hero starfield in `src/components/Starfield.tsx`. Fonts (Inter Tight, JetBrains Mono) are self-hosted through `@fontsource-variable` packages, so no third-party font requests are made.
+
+The stats band under the hero reads `src/data/stats.ts`, which derives every number from existing data: confirmed players from `teams.ts`, staff from `staff.ts`, and the four-team / twenty-position constellation layout. `communitySlotsOpen` in the same file powers the animated count on `/recruitment`; update it together with `Recruitment.tsx`.
+
+All motion respects `prefers-reduced-motion` (static starfield, no tilt, parallax, marquee or counters), and tilt/magnetic effects only run for a fine mouse pointer.
