@@ -4,7 +4,7 @@ import {Label,Reveal} from './Sections';
 
 export function Highlights(){
  return <section id="highlights" className="section highlights" aria-labelledby="highlights-title">
-  <Label number="05">BEYOND THE ROSTER</Label>
+  <Label number="06">BEYOND THE ROSTER</Label>
   <Reveal>
    <div className="section-heading"><h2 id="highlights-title">FOLLOW<br/>THE ERA.</h2><p>The people. The plays. The community.<br/>Stay connected with Exalted Era.</p></div>
    <div className="highlights-grid">

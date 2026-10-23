@@ -37,3 +37,6 @@ Open a confirmed player's profile and choose **Copy Profile Link**. Links use `?
 
 ## Recruitment
 The `/recruitment` page announces 10 open community slots and directs inquiries to the existing Discord invite. It includes preparation tips and an expandable FAQ; joining Discord does not submit an application or reserve a slot. Availability is static, so update `src/components/Recruitment.tsx` when the team fills slots or changes requirements. No form, database, or automated slot counter is configured. `npm start` uses the existing SPA fallback to serve direct page links.
+
+## News
+Add or update announcements in `src/data/news.ts`. Each post needs a unique permanent `id`, its actual announcement date (`YYYY-MM-DD`), category, title, summary, detail paragraphs, and a destination link. Posts appear newest first on the homepage at `#news`; each article has its own anchor link. Use confirmed announcements only. The first post records the October 21, 2026 community recruitment announcement; its ten slots are the original announcement count, not current inventory. Update recruitment availability separately when it changes. Future posts require a build/deployment; no CMS or external feed is configured.
