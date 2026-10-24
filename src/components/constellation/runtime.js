@@ -2,6 +2,7 @@ export function mountConstellation(root,sourceTeams){
 const cleanups=[];
 const addEventListener=(type,handler,options)=>{window.addEventListener(type,handler,options);cleanups.push(()=>window.removeEventListener(type,handler,options))};
 const $=s=>root.querySelector(s),$$=s=>[...root.querySelectorAll(s)];
+let cardsReady=false,cardsMode=false,profileFocusFrame=0;
 const teams=sourceTeams.map(t=>({...t,members:[...t.members]}));
 while(teams.length<4)teams.push({name:'TEAM 0'+(teams.length+1),members:[]});
 const shapes=[
@@ -13,11 +14,12 @@ const shapes=[
 const connections=[[[0,1],[1,2],[1,3],[3,4]],[[0,1],[1,2],[1,3],[3,4]],[[0,1],[1,2],[2,3],[2,4]],[[0,1],[1,2],[2,3],[3,4]]];
 const labels=[[10,8],[65,7],[6,53],[60,57]];
 let filter='all',selected=0,paused=matchMedia('(prefers-reduced-motion: reduce)').matches;const players=[];let buttons=[];
-teams.forEach((team,t)=>{for(let i=0;i<5;i++){const p=team.members[i];players.push({team:t,slot:i,name:p?.name||'Player '+String(t*5+i+1).padStart(2,'0'),number:p?.number||String(t*5+i+1).padStart(2,'0'),image:p?.image,reserved:!p})}});
+teams.forEach((team,t)=>{for(let i=0;i<5;i++){const p=team.members[i];players.push({team:t,slot:i,name:p?.name||'Player '+String(t*5+i+1).padStart(2,'0'),number:p?.number||String(t*5+i+1).padStart(2,'0'),image:p?.image,position:p?.position,reserved:!p})}});
 function xy(n){const p=shapes[n.team][n.slot];if(innerWidth>700)return {x:p[0],y:p[1]};const bounds=[ [12,37,18,46],[63,94,17,49],[8,38,58,92],[56,92,61,92] ][n.team];return {x:12+(p[0]-bounds[0])/(bounds[1]-bounds[0])*75,y:n.team*25+5+(p[1]-bounds[2])/(bounds[3]-bounds[2])*17};}
 
 function visible(){return players.map((p,i)=>({p,i})).filter(x=>filter==='all'||String(x.p.team)===filter).map(x=>x.i)}
 function renderMap(){
+ if(cardsReady)renderCards();
  const mobile=innerWidth<=700;
  let svg=`<defs><radialGradient id="haze"><stop stop-color="#b6c7e5" stop-opacity=".09"/><stop offset="1" stop-color="#b6c7e5" stop-opacity="0"/></radialGradient><linearGradient id="trail"><stop stop-color="#c7d4e7" stop-opacity="0"/><stop offset=".55" stop-color="#c7d4e7" stop-opacity=".25"/><stop offset="1" stop-color="#c7d4e7" stop-opacity="0"/></linearGradient></defs>`;
  if(!mobile)svg+=`<path class="celestial-trail" d="M-80 540C220 680 590-110 1080 120"/><path class="celestial-trail trail-two" d="M-100 130C480-80 440 710 1120 490"/><circle class="atlas-ring" cx="505" cy="355" r="235"/><circle class="atlas-ring outer" cx="505" cy="355" r="290"/><path class="axis-ticks" d="M505 106v8M505 596v8M260 355h8M742 355h8"/>`;
@@ -45,7 +47,7 @@ const motionQuery=matchMedia('(prefers-reduced-motion: reduce)');
 const canvas=$('#sky'),ctx=canvas.getContext('2d');let width=0,height=0,tick=0,frame=0;const dust=Array.from({length:120},(_,i)=>({x:Math.sin(i*127.1)*43758.5453%1,y:Math.sin(i*311.7)*12345.678%1,r:i%9===0?1.1:.5}));
 function resize(){width=canvas.clientWidth;height=canvas.clientHeight;const d=Math.min(devicePixelRatio||1,2);canvas.width=width*d;canvas.height=height*d;ctx.setTransform(d,0,0,d,0,0);renderMap();draw()}
 function draw(){ctx.clearRect(0,0,width,height);dust.forEach((p,i)=>{ctx.globalAlpha=.16+(Math.sin(tick*.008+i)+1)*.15;ctx.fillStyle='#b9c6e1';ctx.beginPath();ctx.arc(Math.abs(p.x)*width,Math.abs(p.y)*height,p.r,0,Math.PI*2);ctx.fill()});tick++}
-function loop(){if(!paused&&!document.hidden)draw();frame=requestAnimationFrame(loop)}
+function loop(){if(!paused&&!document.hidden&&!cardsMode)draw();frame=requestAnimationFrame(loop)}
 function motionLabel(){root.host.classList.toggle('paused',paused);$('#motion').textContent=paused?'RESUME STARFIELD ▷':'PAUSE STARFIELD Ⅱ';$('#motion').setAttribute('aria-pressed',String(paused))}$('#motion').onclick=()=>{paused=!paused;motionLabel()};const motionChange=e=>{paused=e.matches;motionLabel()};motionQuery.addEventListener('change',motionChange);addEventListener('resize',resize);select(0);resize();motionLabel();loop();
 
 // Camera controls are independent of player data and the live website.
@@ -105,7 +107,7 @@ function renderSearch(){
  found.forEach(({p,i})=>{const b=document.createElement('button');b.className='search-result';b.innerHTML=`<span>${p.name}</span><small>TEAM 0${p.team+1} / ${p.number}</small>`;b.onclick=()=>choosePlayer(i);b.onkeydown=e=>{const all=[...results.querySelectorAll('button')],n=all.indexOf(b);if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();all[(n+(e.key==='ArrowDown'?1:-1)+all.length)%all.length].focus()}if(e.key==='Escape'){results.hidden=true;search.focus()}};results.append(b)});
 }
 function choosePlayer(i){
- hidePreview();endTour();focusedTeam=null;$('#team-focus').hidden=true;isolated=false;$('#isolate').setAttribute('aria-pressed','false');$('#isolate').textContent='ISOLATE TEAM';applyFilter('all');select(i);const point=xy(players[i]);centerPoint(point.x,point.y,innerWidth<=700?1.3:1.7);results.hidden=true;$('#search-status').textContent=`${players[i].name} selected in Team 0${players[i].team+1}`;chart.scrollIntoView({behavior:motionQuery.matches?'instant':'smooth',block:'nearest'});buttons[i].focus({preventScroll:true});hidePreview();
+ hidePreview();endTour();focusedTeam=null;$('#team-focus').hidden=true;isolated=false;$('#isolate').setAttribute('aria-pressed','false');$('#isolate').textContent='ISOLATE TEAM';applyFilter('all');select(i);const point=xy(players[i]);centerPoint(point.x,point.y,innerWidth<=700?1.3:1.7);results.hidden=true;$('#search-status').textContent=`${players[i].name} selected in Team 0${players[i].team+1}`;const target=cardsMode?$('#roster-cards'):chart;target.scrollIntoView({behavior:motionQuery.matches?'instant':'smooth',block:'nearest'});(cardsMode?$(`[data-player-card="${players[i].number}"]`):buttons[i])?.focus({preventScroll:true});hidePreview();
 }
 search.addEventListener('input',renderSearch);search.addEventListener('focus',()=>{if(search.value.trim())renderSearch()});search.addEventListener('keydown',e=>{const first=results.querySelector('button');if(e.key==='ArrowDown'&&first){e.preventDefault();first.focus()}if(e.key==='Enter'&&matches().length){e.preventDefault();choosePlayer(matches()[0].i)}if(e.key==='Escape'){results.hidden=true}});
 $('#clear-search').onclick=()=>{search.value='';renderSearch();search.focus()};
@@ -122,6 +124,42 @@ addEventListener('keydown',e=>{if(e.key==='Escape'){hidePreview();results.hidden
 const dismissSearch=e=>{if(!e.target.closest('.search-wrap'))results.hidden=true};root.addEventListener('pointerdown',dismissSearch);cleanups.push(()=>root.removeEventListener('pointerdown',dismissSearch));
 cleanups.push(()=>clearTimeout(hidePreviewTimer));
 
+
+// Cards use the same roster and profile dialog as the constellation map.
+function renderCards(){
+ const query=search.value.trim().toLowerCase();
+ const found=players.map((p,i)=>({p,i})).filter(({p})=>!p.reserved&&(filter==='all'||String(p.team)===filter)&&(!query||`${p.name} ${p.number} team 0${p.team+1}`.toLowerCase().includes(query)));
+ const grid=$('#cards-grid');grid.replaceChildren();
+ $('#cards-status').textContent=found.length?`${found.length} player${found.length===1?'':'s'}`:filter==='2'||filter==='3'?'This team’s roster has not been announced.':'No matching players. Try another name or team.';
+ found.forEach(({p,i})=>{
+  const card=document.createElement('button');card.type='button';card.className='roster-card';card.dataset.playerCard=p.number;card.setAttribute('aria-label',`View ${p.name} profile, Team 0${p.team+1}`);card.setAttribute('aria-haspopup','dialog');
+  const portrait=document.createElement('span');portrait.className='roster-card-photo';
+  const fallback=document.createElement('span');fallback.className='roster-card-fallback';fallback.textContent=p.number;fallback.setAttribute('aria-hidden','true');portrait.append(fallback);
+  if(p.image){const img=document.createElement('img');img.src=p.image;img.alt='';img.loading='lazy';img.decoding='async';img.addEventListener('error',()=>img.remove(),{once:true});portrait.append(img)}
+  const body=document.createElement('span');body.className='roster-card-body';
+  const team=document.createElement('span');team.className='roster-card-team';team.textContent=`TEAM 0${p.team+1} / ${p.number}`;
+  const name=document.createElement('strong');name.textContent=p.name;
+  const role=document.createElement('span');role.className='roster-card-role';role.textContent=p.position||'Valorant Mobile';
+  const cta=document.createElement('span');cta.className='roster-card-cta';cta.textContent='VIEW PROFILE ↗';
+  body.append(team,name,role,cta);card.append(portrait,body);
+  card.onclick=()=>{select(i);$(`[data-player-card="${p.number}"]`)?.focus({preventScroll:true});$('#profile').click()};grid.append(card);
+ });
+}
+function setRosterView(mode){
+ cardsMode=mode==='cards';hidePreview();endTour();
+ root.host.classList.toggle('cards-mode',cardsMode);
+ $('#view-map').setAttribute('aria-pressed',String(!cardsMode));$('#view-cards').setAttribute('aria-pressed',String(cardsMode));
+ $('#roster-map').hidden=cardsMode;$('#roster-cards').hidden=!cardsMode;
+ $('#tour-start').hidden=cardsMode;$('#motion').hidden=cardsMode;$('#focus-selected').hidden=cardsMode;
+ $('#team-focus').hidden=true;
+ if(cardsMode)renderCards();else{resize();camera()}
+}
+$('#view-map').onclick=()=>setRosterView('map');$('#view-cards').onclick=()=>setRosterView('cards');
+search.addEventListener('input',()=>{if(cardsMode){renderCards();results.hidden=true}});
+$('#clear-search').addEventListener('click',()=>{if(cardsMode)renderCards()});
+$$('[data-filter]').forEach(b=>b.addEventListener('click',()=>{if(cardsMode){$('#team-focus').hidden=true;renderCards()}}));
+cardsReady=true;setRosterView(innerWidth<=700?'cards':'map');
+$('#dialog').addEventListener('close',()=>{if(cardsMode)$(`[data-player-card="${players[selected].number}"]`)?.focus({preventScroll:true})});
 
 // Player numbers are stable across display-name changes; reserved positions have no public profile.
 const profileDialog=$('#dialog');
@@ -156,12 +194,13 @@ function syncProfileUrl(){
   if(index>=0){choosePlayer(index);$('#profile').click()}
   else if(profileDialog.open){profileDialog.close();buttons[selected].focus({preventScroll:true})}
  }finally{openingFromUrl=false}
+ if(index<0&&cardsMode){cancelAnimationFrame(profileFocusFrame);profileFocusFrame=requestAnimationFrame(()=>$(`[data-player-card="${players[selected].number}"]`)?.focus({preventScroll:true}))}
 }
 addEventListener('popstate',syncProfileUrl);
 addEventListener('hashchange',syncProfileUrl);
 // Wait until all controls are initialized, including React StrictMode's remount.
 let profileUrlFrame=requestAnimationFrame(syncProfileUrl);
-cleanups.push(()=>cancelAnimationFrame(profileUrlFrame));
+cleanups.push(()=>{cancelAnimationFrame(profileUrlFrame);cancelAnimationFrame(profileFocusFrame)});
 
 return ()=>{cancelAnimationFrame(frame);cleanups.forEach(fn=>fn());motionQuery.removeEventListener('change',motionChange);const dialog=$('#dialog');if(dialog?.open)dialog.close();};
 }
