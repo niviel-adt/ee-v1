@@ -502,9 +502,8 @@ img.tiny-star{width:42px;height:42px;object-fit:contain;display:block;opacity:.8
 .scrim-intro{display:flex;justify-content:space-between;align-items:center;gap:28px;margin-bottom:28px}
 .scrim-intro h1{font-size:clamp(32px,4vw,54px);font-weight:850;letter-spacing:-.04em;margin:10px 0}
 .scrim-intro p:not(.eyebrow){color:var(--muted);font-size:14px}
-.scrim-intro>div:last-child{max-width:330px}
+.scrim-intro>.scrim-access{max-width:330px}
 .scrim-access{line-height:1.6;margin-top:12px}
 .scrim-frame{width:100%;height:calc(100svh - 120px);min-height:650px;border:1px solid var(--line-2);background:var(--bg)}
-.scrim-fallback{font-size:12px;color:var(--muted);margin-top:16px}.scrim-fallback a{text-decoration:underline;color:var(--ink)}
 @media(min-width:901px) and (max-width:1440px){.nav-links a{padding:8px 7px;font-size:10px}.nav-inner{gap:14px;padding-inline:24px}.nav-contact{padding:11px 12px;font-size:9px}}
 @media(max-width:700px){.scrim-intro{align-items:flex-start;flex-direction:column;gap:18px}.scrim-frame{height:85svh;min-height:650px}.scrim-page{padding-top:24px}}

@@ -40,7 +40,7 @@ The `/recruitment` page announces 10 open community slots and directs inquiries 
 
 ## Scrim Tracker
 
-The desktop and mobile navigation link to `/scrims`, which embeds the shared Exalted Era Performance Room. Members can view the four team workspaces, scrim averages, match history, and rosters without signing in. The **Open tracker** link opens the app in a separate tab for officer sign-in and editing. Authentication, officer permissions, and shared records stay with the tracker at `https://exalted-scrim-tracker.briskpetal32.chatgpt.site`; this website does not copy records or manage officer access. The existing SPA fallback also serves direct `/scrims` links.
+The desktop and mobile navigation link to `/scrims`, which embeds the shared Exalted Era Performance Room. Members can view the four team workspaces, scrim averages, match history, and rosters without signing in. Officers sign in and edit directly in the embedded tracker; there is no separate Open tracker link. Authentication, officer permissions, and shared records stay with the tracker at `https://exalted-scrim-tracker.briskpetal32.chatgpt.site`; this website does not copy records or manage officer access. The existing SPA fallback also serves direct `/scrims` links.
 
 ## Interactive design layer
 Shared motion helpers live in `src/components/fx.tsx` (scroll reveals, staggered entrances, masked headline reveals, tilt/glow cards, magnetic buttons, count-up numbers, marquee) and the hero starfield in `src/components/Starfield.tsx`. Fonts (Inter Tight, JetBrains Mono) are self-hosted through `@fontsource-variable` packages, so no third-party font requests are made.
