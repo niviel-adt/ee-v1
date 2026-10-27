@@ -507,3 +507,14 @@ img.tiny-star{width:42px;height:42px;object-fit:contain;display:block;opacity:.8
 .scrim-frame{width:100%;height:calc(100svh - 120px);min-height:650px;border:1px solid var(--line-2);background:var(--bg)}
 @media(min-width:901px) and (max-width:1440px){.nav-links a{padding:8px 7px;font-size:10px}.nav-inner{gap:14px;padding-inline:24px}.nav-contact{padding:11px 12px;font-size:9px}}
 @media(max-width:700px){.scrim-intro{align-items:flex-start;flex-direction:column;gap:18px}.scrim-frame{height:85svh;min-height:650px}.scrim-page{padding-top:24px}}
+
+/* On phones the tracker gets the screen below the website header. */
+@media(max-width:700px){
+ .scrim-site-header{height:64px;min-height:64px;padding:0 16px}
+ .scrim-site-header .brand img{width:36px;height:36px}
+ .scrim-site-header .brand{font-size:15px;gap:9px}
+ .scrim-site-header .text-link{min-height:44px;font-size:11px;gap:8px}
+ .scrim-page{padding:0 0 env(safe-area-inset-bottom,0px);height:calc(100svh - 64px);height:calc(100dvh - 64px)}
+ .scrim-intro{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ .scrim-frame{display:block;width:100%;height:calc(100svh - 64px - env(safe-area-inset-bottom,0px));height:calc(100dvh - 64px - env(safe-area-inset-bottom,0px));min-height:0;border:0}
+}

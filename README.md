@@ -55,3 +55,5 @@ Add or update announcements in `src/data/news.ts`. Each post needs a unique perm
 
 ## Roster Map / Cards views
 The roster defaults to Cards at initial viewport widths of 700px or less and Map on larger screens. Visitors can switch views without losing the selected player or team filter. Both views use `src/data/teams.ts` and the existing profile dialog/share links. Cards list confirmed players only; unannounced teams show an explanatory empty state. Names, portraits, team numbers, and any supplied `position` are shown; otherwise cards say Valorant Mobile. Search filters cards by name, number, or team. The starfield stops drawing while Cards is active; switching back recalculates map dimensions. Closing a profile returns keyboard focus to the selected card.
+
+On phones, the Scrim Tracker embed fills the viewport below a compact website header. Its introduction remains available to screen readers, and the tracker provides its own bottom navigation and responsive scorecards.
