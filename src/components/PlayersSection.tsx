@@ -13,5 +13,5 @@ export function PlayersSection(){
   const cleanup=mountConstellation(shadow,teams);
   return ()=>{cleanup();shadow.replaceChildren()};
  },[]);
- return <section id="players" aria-label="Exalted Era player constellations" style={{borderTop:'1px solid #ffffff15'}}><div ref={host}/></section>;
+ return <section id="players" aria-label="Exalted Era player constellations" style={{borderTop:'1px solid var(--line)'}}><div ref={host}/></section>;
 }

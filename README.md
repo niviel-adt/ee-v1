@@ -1,6 +1,10 @@
 # Exalted Era
 React, Vite, TypeScript, Tailwind CSS, Motion, and Lucide landing page.
 
+## Current interface
+
+The public website and embedded Scrim Tracker share a light mist-and-slate palette, static Blackstar geometry, readable type, and restrained lines. `ModernHero.tsx`, `ModernNavbar.tsx`, and `src/styles/light.css` provide the public presentation. All original navigation entries remain, alongside Performance (opens the existing Circle workspace; select Performance there). The floating Back to top control appears after scrolling. The roster's Map/Cards views, profiles and share links, news controls, recruitment, and tracker integration retain their existing behavior.
+
 ## Local development
 Node 22 or later:
 
@@ -23,7 +27,7 @@ Merging into `main` may automatically deploy if Railway automatic deployments ar
 ## Content
 Edit `src/data/staff.ts`, `teams.ts`, and `site.ts`. Staff: Xia (Operations), Avior (Internal), Wasabi (External). Contact Us opens Facebook; Join Our Discord opens Discord. Member portraits are optimized WebP files hosted in `public/portraits/`. Keep new portraits local to avoid third-party image dependencies. The Highlights section links to the existing Facebook and Discord channels; it does not claim unverified match results or events. Edit it in `src/components/Highlights.tsx` when confirmed clips or results are available.
 
-The emblem uses a transparent PNG rendered white through CSS. Portraits display in full color. Team selection, member dialogs, expandable values, navigation tracking, and reduced motion are supported.
+The emblem uses the official transparent PNG. Staff portraits use a restrained grayscale treatment; player portraits retain their existing imagery. Team selection, member dialogs, expandable values, navigation tracking, and reduced motion are supported.
 
 Legacy logo assets remain in the repository; prior website source remains available in Git history. The private design-review Site has its own separate deployment configuration and is not tied to this repository.
 
