@@ -1,2 +1,19 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import {MotionConfig} from 'motion/react';
 import {ScrimTracker} from './components/ScrimTracker';
-import React from 'react';import ReactDOM from 'react-dom/client';import {MotionConfig} from 'motion/react';import {ModernNavbar as Navbar} from './components/ModernNavbar';import {ModernHero as Hero} from './components/ModernHero';import {BackToTop} from './components/BackToTop';import {About,MissionVision,StaffSection,Closing,Footer} from './components/Sections';import {PlayersSection} from './components/PlayersSection';import {News} from './components/News';import {Highlights} from './components/Highlights';import {Recruitment} from './components/Recruitment';import '@fontsource-variable/inter-tight';import '@fontsource-variable/jetbrains-mono';import './styles/index.css';import './styles/light.css';const isScrims=window.location.pathname.replace(/\/$/,'')==='/scrims';if(isScrims)document.title='Scrim Tracker — EXALTED ERA';const isRecruitment=window.location.pathname.replace(/\/$/,'')==='/recruitment';if(isRecruitment)document.title='Recruitment — EXALTED ERA';ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><MotionConfig reducedMotion="always"><a className="skip-link" href={isScrims?"#scrim-main":isRecruitment?"#recruitment-main":"#about"}>Skip to content</a>{isScrims?<ScrimTracker/>:isRecruitment?<Recruitment/>:<><Navbar/><main><Hero/><About/><MissionVision/><StaffSection/><PlayersSection/><News/><Highlights/><Closing/></main><Footer/></>}<BackToTop/></MotionConfig></React.StrictMode>);
+import {Recruitment} from './components/Recruitment';
+import {BackToTop} from './components/BackToTop';
+import '@fontsource-variable/inter-tight';
+import '@fontsource-variable/jetbrains-mono';
+
+const root=ReactDOM.createRoot(document.getElementById('root')!);
+const path=window.location.pathname.replace(/\/$/,'');
+const isScrims=path==='/scrims',isRecruitment=path==='/recruitment';
+if(isScrims||isRecruitment){
+ document.title=isScrims?'Scrim Tracker — EXALTED ERA':'Recruitment — EXALTED ERA';
+ import('./route-styles').then(()=>root.render(<React.StrictMode><MotionConfig reducedMotion="always"><a className="skip-link" href={isScrims?'#scrim-main':'#recruitment-main'}>Skip to content</a>{isScrims?<ScrimTracker/>:<Recruitment/>}<BackToTop/></MotionConfig></React.StrictMode>));
+}else{
+ document.title='Exalted Era — Beyond Ordinary';
+ import('./components/SubmittedHome').then(({SubmittedHome})=>root.render(<React.StrictMode><SubmittedHome/></React.StrictMode>));
+}

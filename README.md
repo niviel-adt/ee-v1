@@ -3,7 +3,7 @@ React, Vite, TypeScript, Tailwind CSS, Motion, and Lucide landing page.
 
 ## Current interface
 
-The public website and embedded Scrim Tracker share a light mist-and-slate palette, static Blackstar geometry, readable type, and restrained lines. `ModernHero.tsx`, `ModernNavbar.tsx`, and `src/styles/light.css` provide the public presentation. All original navigation entries remain, alongside Performance (opens the existing Circle workspace; select Performance there). The floating Back to top control appears after scrolling. The roster's Map/Cards views, profiles and share links, news controls, recruitment, and tracker integration retain their existing behavior.
+The main page restores the approved earlier design from `src/submitted/home.html`, `base.css`, and `comfort.css`, mounted by `SubmittedHome.tsx`. Its roster has two five-player team tabs, a compact staff list, profile dialogs, and the floating Back to top button. The ten original navigation links remain; the Performance links to the ChatGPT-hosted Circle have been removed. Player and staff records still read `src/data/teams.ts` and `staff.ts`. Existing direct player links continue to open their profiles. Edit the submitted HTML for section copy and announcements. Scrim Tracker and Recruitment keep their existing routes and load their styles separately from the homepage.
 
 ## Local development
 Node 22 or later:
@@ -31,12 +31,14 @@ The emblem uses the official transparent PNG. Staff portraits use a restrained g
 
 Legacy logo assets remain in the repository; prior website source remains available in Git history. The private design-review Site has its own separate deployment configuration and is not tied to this repository.
 
-## Constellation roster
+## Legacy constellation source
+
+The constellation implementation is retained in the repository for reference. The current homepage uses the approved roster rows described above.
 The Players section uses four constellations with five positions each. Teams 01/02 read the current player data; Teams 03/04 show explicit placeholders until details are supplied. Map controls include pan, zoom, reset, a manual team tour, isolation, and quick profiles. On mobile, Pan Map enables map gestures; Done Panning restores page scrolling. Keyboard +/−/0 controls zoom/reset; arrows move through stars. Reduced motion is respected.
 
 The map markup, styles, and lifecycle-managed runtime live in `src/components/constellation/`. `PlayersSection.tsx` mounts them in an isolated styling root so existing page sections keep their styling. Continue editing players in `src/data/teams.ts`.
 
-## Shareable player profiles
+## Legacy shareable player profiles
 Open a confirmed player's profile and choose **Copy Profile Link**. Links use `?player=05#players` (Vinc, for example); player numbers are stable identifiers even if display names change. Opening or reloading the link selects the player and opens their profile. Browser Back/Forward restores profile navigation. Closing a directly linked profile removes the player parameter while preserving other query parameters. If clipboard access is unavailable, the dialog exposes a selectable link. Reserved positions do not offer sharing, and unknown player numbers do not open a profile. These links share the website's existing social preview; per-player preview images are not generated.
 
 ## Recruitment
@@ -54,10 +56,10 @@ The stats band under the hero reads `src/data/stats.ts`, which derives every num
 All motion respects `prefers-reduced-motion` (static starfield, no tilt, parallax, marquee or counters), and tilt/magnetic effects only run for a fine mouse pointer.
 
 
-## News
+## Legacy news component
 Add or update announcements in `src/data/news.ts`. Each post needs a unique permanent `id`, its actual announcement date (`YYYY-MM-DD`), category, title, summary, detail paragraphs, and a destination link. Posts appear newest first on the homepage at `#news`; each article has its own anchor link. Use confirmed announcements only. The first post records the October 21, 2026 community recruitment announcement; its ten slots are the original announcement count, not current inventory. Update recruitment availability separately when it changes. Future posts require a build/deployment; no CMS or external feed is configured.
 
-## Roster Map / Cards views
+## Legacy roster Map / Cards views
 The roster defaults to Cards at initial viewport widths of 700px or less and Map on larger screens. Visitors can switch views without losing the selected player or team filter. Both views use `src/data/teams.ts` and the existing profile dialog/share links. Cards list confirmed players only; unannounced teams show an explanatory empty state. Names, portraits, team numbers, and any supplied `position` are shown; otherwise cards say Valorant Mobile. Search filters cards by name, number, or team. The starfield stops drawing while Cards is active; switching back recalculates map dimensions. Closing a profile returns keyboard focus to the selected card.
 
 On phones, the Scrim Tracker embed fills the viewport below a compact website header. Its introduction remains available to screen readers, and the tracker provides its own bottom navigation and responsive scorecards.

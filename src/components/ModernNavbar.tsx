@@ -3,8 +3,7 @@ import {ArrowUpRight,Menu,X} from 'lucide-react';
 import {navigation,site} from '../data/site';
 import {Brand} from './Brand';
 
-const circle='https://exalted-era-circle.briskpetal32.chatgpt.site';
-const links=[...navigation.slice(0,5),['Performance',circle],...navigation.slice(5),['Scrim Tracker','/scrims'],['Recruitment','/recruitment']];
+const links=[...navigation,['Scrim Tracker','/scrims'],['Recruitment','/recruitment']];
 const href=(id:string)=>id.startsWith('/')||id.startsWith('https:')?id:`#${id}`;
 
 export function ModernNavbar(){
@@ -23,6 +22,6 @@ export function ModernNavbar(){
   addEventListener('keydown',key);addEventListener('resize',resize);
   return()=>{document.body.style.overflow=overflow;removeEventListener('keydown',key);removeEventListener('resize',resize);};
  },[open]);
- const items=links.map(([label,id])=><a key={id} href={href(id)} aria-current={id===active?'location':undefined} target={id===circle?'_blank':undefined} rel={id===circle?'noopener noreferrer':undefined} title={id===circle?'Open The Circle workspace, then select Performance.':undefined} onClick={()=>setOpen(false)}>{label}{id===circle&&<ArrowUpRight size={12} aria-hidden="true"/>}</a>);
+ const items=links.map(([label,id])=><a key={id} href={href(id)} aria-current={id===active?'location':undefined} onClick={()=>setOpen(false)}>{label}</a>);
  return <header className={`nav modern-nav ${open?'menu-open':''}`}><div className="nav-inner"><Brand/><div className="modern-nav-actions"><a className="text-link modern-tracker-link" href="/scrims">Scrim tracker <ArrowUpRight size={16}/></a><a className="button" href="/recruitment">Join us <ArrowUpRight size={16}/></a><button ref={toggle} className="menu" aria-controls="mobile-navigation" aria-expanded={open} aria-label={open?'Close navigation':'Open navigation'} onClick={()=>setOpen(!open)}>{open?<X size={20}/>:<Menu size={20}/>}</button></div></div><nav className="nav-links" aria-label="Main navigation">{items}</nav>{open&&<div className="mobile-menu" id="mobile-navigation" ref={panel}><nav aria-label="Mobile navigation">{items}</nav><div className="mobile-menu-foot"><a href={site.discordUrl} target="_blank" rel="noopener noreferrer">Discord <ArrowUpRight size={14}/></a><a href={site.facebookUrl} target="_blank" rel="noopener noreferrer">Facebook <ArrowUpRight size={14}/></a></div></div>}</header>;
 }
