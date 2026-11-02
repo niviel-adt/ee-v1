@@ -1,117 +1,153 @@
-
-import React,{useEffect,useRef,useState} from 'react';
+import React,{useCallback,useEffect,useRef,useState} from 'react';
 import {teams} from '../data/teams';
 import '../styles/sphere.css';
 
-const SIDE=420,COLS=6,ROWS=4,CW=166,CH=216;
-const SLOTS=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,14,15,16,17,18,19,-1,-1,-1];
-const roster=Array.from({length:20},(_,i)=>{
- const existing=teams.flatMap(team=>team.members)[i];
- return {name:existing?.name||`PLAYER ${String(i+1).padStart(2,'0')}`,image:existing?.image||'',number:String(i+1).padStart(2,'0'),team:Math.floor(i/5)};
+type Player={id:number;name:string;image:string;team:number;x:number;y:number;z:number};
+const current=teams.flatMap(team=>team.members);
+const players:Player[]=Array.from({length:20},(_,i)=>{
+ const v=1-2*(i+.5)/20,angle=i*Math.PI*(3-Math.sqrt(5)),radius=Math.sqrt(1-v*v);
+ return {id:i,name:current[i]?.name||'PLAYER '+String(i+1).padStart(2,'0'),
+ image:current[i]?.image||'',team:Math.floor(i/5),x:Math.cos(angle)*radius,y:v,z:Math.sin(angle)*radius};
 });
-const placeholder='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420"><defs><linearGradient id="g" x2="0" y2="1"><stop stop-color="#b4c6c8"/><stop offset="1" stop-color="#70858c"/></linearGradient></defs><rect width="300" height="420" fill="url(#g)"/><circle cx="150" cy="137" r="64" fill="#536c73"/><path d="M22 395 Q30 228 150 228 Q270 228 278 395Z" fill="#465b66"/></svg>');
-function portrait(i:number){return roster[i].image||placeholder;}
-function sphereUV(x:number,y:number,yaw:number,pitch:number){
- const nx=(x-SIDE/2)/(SIDE*.475),ny=(SIDE/2-y)/(SIDE*.475);
- const rr=nx*nx+ny*ny;if(rr>1)return null;
- const nz=Math.sqrt(1-rr),cp=Math.cos(pitch),sp=Math.sin(pitch),cy=Math.cos(yaw),sy=Math.sin(yaw);
- const py=ny*cp+nz*sp,pz=nz*cp-ny*sp;
- const px=nx*cy-pz*sy,pzz=nx*sy+pz*cy;
- let u=(Math.atan2(px,pzz)/(2*Math.PI)+.5)%1;if(u<0)u+=1;
- const v=.5-Math.asin(Math.max(-1,Math.min(1,py)))/Math.PI;
- return {u,v,z:nz};
-}
-function loadImage(src:string){return new Promise<HTMLImageElement|null>(resolve=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=src;});}
-function atlasFrom(images:(HTMLImageElement|null)[]){
- const cv=document.createElement('canvas');cv.width=COLS*CW;cv.height=ROWS*CH;
- const c=cv.getContext('2d',{willReadFrequently:true})!;
- for(let n=0;n<COLS*ROWS;n++){
-  const x=n%COLS*CW,y=Math.floor(n/COLS)*CH,id=SLOTS[n];
-  c.fillStyle='#344c55';c.fillRect(x,y,CW,CH);
-  c.fillStyle='#9baeb2';c.fillRect(x+5,y+5,CW-10,CH-10);
-  if(id<0){
-   c.fillStyle='#cfdad6';c.fillRect(x+8,y+8,CW-16,CH-16);
-   c.strokeStyle='#526b74';c.lineWidth=2;c.beginPath();c.moveTo(x+CW/2,y+38);c.lineTo(x+CW-35,y+CH/2);c.lineTo(x+CW/2,y+CH-39);c.lineTo(x+35,y+CH/2);c.closePath();c.stroke();
-   c.fillStyle='#415a63';c.font='bold 39px Arial';c.textAlign='center';c.fillText('EE',x+CW/2,y+CH/2+14);
-   continue;
-  }
-  const im=images[id];
-  if(im){
-   const ratio=Math.max((CW-14)/im.width,(CH-14)/im.height),w=im.width*ratio,h=im.height*ratio;
-   c.save();c.beginPath();c.rect(x+7,y+7,CW-14,CH-14);c.clip();c.filter='grayscale(100%) contrast(.92)';c.drawImage(im,x+CW/2-w/2,y+CH/2-h/2,w,h);c.restore();
-  }else{
-   c.fillStyle='#667d85';c.beginPath();c.arc(x+CW/2,y+69,35,0,Math.PI*2);c.fill();
-   c.beginPath();c.ellipse(x+CW/2,y+183,85,78,0,0,Math.PI*2);c.fill();
-  }
-  const grad=c.createLinearGradient(0,y+126,0,y+CH);grad.addColorStop(0,'#22353c00');grad.addColorStop(1,'#263944f2');c.fillStyle=grad;c.fillRect(x+7,y+110,CW-14,CH-117);
-  c.strokeStyle='#d7e1d9';c.lineWidth=2;c.strokeRect(x+6,y+6,CW-12,CH-12);
-  c.font='bold 22px Arial';c.textAlign='center';c.fillStyle='#f1f5f0';c.fillText(roster[id].number,x+CW/2,y+CH-43);
-  c.font='bold 11px Arial';c.fillText(roster[id].name.toUpperCase().slice(0,16),x+CW/2,y+CH-23);
- }
- return cv.getContext('2d',{willReadFrequently:true})!.getImageData(0,0,cv.width,cv.height);
-}
-function drawSphere(canvas:HTMLCanvasElement,atlas:ImageData,yaw:number,pitch:number){
- const ctx=canvas.getContext('2d');if(!ctx)return;
- const out=ctx.createImageData(SIDE,SIDE),dst=out.data,src=atlas.data,W=atlas.width;
- for(let y=0;y<SIDE;y++)for(let x=0;x<SIDE;x++){
-  const ii=(y*SIDE+x)*4,uv=sphereUV(x,y,yaw,pitch);
-  if(!uv){dst[ii+3]=0;continue;}
-  const sx=Math.min(W-1,Math.floor(uv.u*W)),sy=Math.min(atlas.height-1,Math.floor(uv.v*atlas.height));
-  const si=(sy*W+sx)*4;
-  const light=.69+.28*uv.z;
-  dst[ii]=src[si]*light;dst[ii+1]=src[si+1]*light;dst[ii+2]=src[si+2]*light;dst[ii+3]=255;
- }
- ctx.putImageData(out,0,0);
+const pad=(n:number)=>String(n).padStart(2,'0');
+function Placeholder({number}:{number:number}){return <div className="gold-placeholder"><span className="gold-monogram">EE</span><span>{pad(number)}</span></div>;}
+function Portrait({player}:{player:Player}){return player.image?<img src={player.image} loading="eager" alt="" draggable={false}/>:<Placeholder number={player.id+1}/>;}
+function layout(stage:HTMLElement){
+ const {width:w,height:h}=stage.getBoundingClientRect();
+ const mobile=w<620;
+ const radius=Math.min(w*(mobile?.36:.315),h*(mobile?.34:.365),mobile?210:285);
+ const cw=mobile?85:Math.min(138,Math.max(104,w*.143));
+ const ch=cw*1.45;
+ return {w,h,cx:w*.5,cy:h*(mobile?.55:.50),radius,cw,ch,mobile};
 }
 export function SpherePage(){
- const canvas=useRef<HTMLCanvasElement>(null),atlas=useRef<ImageData|null>(null);
- const rotate=useRef({yaw:-.34,pitch:.1}),drag=useRef<{x:number,y:number,startX:number,startY:number,moved:boolean}|null>(null);
- const focusedRef=useRef<number|null>(null),playRef=useRef(true),speedRef=useRef(35);
- const [focused,setFocused]=useState<number|null>(null),[selected,setSelected]=useState(3),[shown,setShown]=useState(false),[playing,setPlaying]=useState(true),[speed,setSpeed]=useState(35);
- const currentTeam=focused??Math.floor(selected/5);
- useEffect(()=>{focusedRef.current=focused;setShown(false);if(focused!==null){const id=requestAnimationFrame(()=>requestAnimationFrame(()=>setShown(true)));return ()=>cancelAnimationFrame(id);}},[focused]);
- useEffect(()=>{playRef.current=playing;},[playing]);
+ const stage=useRef<HTMLDivElement>(null),cards=useRef<Array<HTMLButtonElement|null>>([]);
+ const orientation=useRef({yaw:-.35,pitch:-.1});
+ const drag=useRef<{x:number;y:number;sx:number;sy:number}|null>(null),moved=useRef(false),mode=useRef<number|null>(null);
+ const speedRef=useRef(35),playingRef=useRef(true),returning=useRef(false);
+ const [team,setTeam]=useState(0),[selected,setSelected]=useState(3),[focused,setFocused]=useState<number|null>(null);
+ const [playing,setPlaying]=useState(true),[speed,setSpeed]=useState(35);
+ const panelTeam=focused??team;
+ const applyGlobe=useCallback((animate=false)=>{
+  if(!stage.current)return;
+  const m=layout(stage.current),{yaw,pitch}=orientation.current;
+  const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+  players.forEach((p,i)=>{
+   const el=cards.current[i];if(!el)return;
+   const xx=p.x*cy+p.z*sy,zz=-p.x*sy+p.z*cy;
+   const yy=p.y*cp-zz*sp,z2=p.y*sp+zz*cp;
+   const depth=(z2+1)*.5,scale=.48+.66*depth;
+   const x=m.cx+xx*m.radius-m.cw/2,y=m.cy-yy*m.radius-m.ch/2;
+   el.style.width=m.cw+'px';el.style.height=m.ch+'px';
+   el.style.transition=animate?'transform 1080ms cubic-bezier(.19,1,.22,1),opacity 870ms ease,width 1080ms ease,height 1080ms ease,filter 870ms ease':'none';
+   el.style.transform='translate3d('+x+'px,'+y+'px,0) scale('+scale.toFixed(3)+') rotate('+(-xx*6).toFixed(2)+'deg)';
+   el.style.zIndex=String(10+Math.round(depth*80));
+   el.style.opacity=(.27+.73*depth).toFixed(3);
+   el.style.filter='brightness('+(0.58+depth*.57).toFixed(2)+')';
+   el.style.pointerEvents='auto';
+   el.classList.remove('is-selected');
+  });
+ },[]);
+ const applyTeam=useCallback((target:number,pick:number)=>{
+  if(!stage.current)return;
+  const m=layout(stage.current);
+  const gap=m.mobile?4:Math.min(14,m.w*.014);
+  const cw=Math.min(m.mobile?87:168,(m.w-42-gap*4)/5),ch=cw*1.45;
+  const span=cw*5+gap*4,start=(m.w-span)/2;
+  players.forEach((p,i)=>{
+   const el=cards.current[i];if(!el)return;
+   const match=p.team===target,rank=i%5;
+   const x=match?start+rank*(cw+gap):m.cx-m.cw/2;
+   const y=match?m.cy-ch/2+(i===pick?(m.mobile?-10:-22):0):m.cy-ch/2;
+   el.style.transition='transform 1100ms cubic-bezier(.19,1,.22,1),opacity 750ms ease,width 1100ms cubic-bezier(.19,1,.22,1),height 1100ms cubic-bezier(.19,1,.22,1),filter 700ms ease';
+   el.style.width=cw+'px';el.style.height=ch+'px';
+   el.style.transform='translate3d('+x+'px,'+y+'px,0) scale('+(match?(i===pick?1.07:1):.25)+') rotate(0deg)';
+   el.style.opacity=match?'1':'.055';
+   el.style.filter=match?'brightness(1)':'brightness(.2)';
+   el.style.pointerEvents=match?'auto':'none';
+   el.style.zIndex=match?String(200+rank):'2';
+   el.classList.toggle('is-selected',i===pick);
+  });
+ },[]);
+ const choose=useCallback((i:number)=>{
+  if(moved.current)return;
+  setSelected(i);setTeam(players[i].team);setFocused(players[i].team);
+  mode.current=players[i].team;returning.current=false;
+  requestAnimationFrame(()=>applyTeam(players[i].team,i));
+ },[applyTeam]);
+ const pickTeam=useCallback((n:number)=>{
+  const i=n*5;setSelected(i);setTeam(n);setFocused(n);mode.current=n;returning.current=false;
+  requestAnimationFrame(()=>applyTeam(n,i));
+ },[applyTeam]);
+ const back=useCallback(()=>{
+  setFocused(null);mode.current=null;returning.current=true;applyGlobe(true);
+  window.setTimeout(()=>{returning.current=false;},1140);
+ },[applyGlobe]);
  useEffect(()=>{speedRef.current=speed;},[speed]);
- useEffect(()=>{let active=true;Promise.all(roster.map(p=>loadImage(p.image||placeholder))).then(images=>{if(active)atlas.current=atlasFrom(images);});
- let id=0,last=0;const tick=(t:number)=>{if(!active)return;id=requestAnimationFrame(tick);if(t-last<40)return;const elapsed=Math.min(90,t-last||40);last=t;
-  if(focusedRef.current===null&&playRef.current&&!drag.current)rotate.current.yaw+=elapsed*.00015*speedRef.current/35;
-  if(canvas.current&&atlas.current)drawSphere(canvas.current,atlas.current,rotate.current.yaw,rotate.current.pitch);
+ useEffect(()=>{playingRef.current=playing;},[playing]);
+ useEffect(()=>{
+  applyGlobe(true);
+  let id=0,last=0;let alive=true;
+  const tick=(now:number)=>{
+   if(!alive)return;id=requestAnimationFrame(tick);
+   if(now-last<25)return;
+   const dt=Math.min(60,now-last||25);last=now;
+   if(mode.current!==null||returning.current)return;
+   if(playingRef.current&&!drag.current)orientation.current.yaw+=dt*.00017*(speedRef.current/35);
+   applyGlobe();
+  };
+  id=requestAnimationFrame(tick);
+  const resized=()=>{
+   if(mode.current===null)applyGlobe(true);else applyTeam(mode.current,Number(stage.current?.dataset.selected||3));
+  };
+  window.addEventListener('resize',resized);
+  return()=>{alive=false;cancelAnimationFrame(id);window.removeEventListener('resize',resized);};
+ },[applyGlobe,applyTeam]);
+ useEffect(()=>{if(stage.current)stage.current.dataset.selected=String(selected);},[selected]);
+ const down=(e:React.PointerEvent<HTMLDivElement>)=>{if(mode.current!==null)return;drag.current={x:e.clientX,y:e.clientY,sx:e.clientX,sy:e.clientY};moved.current=false;};
+ const move=(e:React.PointerEvent<HTMLDivElement>)=>{
+  if(!drag.current||mode.current!==null)return;
+  const d=drag.current;const dx=e.clientX-d.x,dy=e.clientY-d.y;
+  if(Math.hypot(e.clientX-d.sx,e.clientY-d.sy)>5)moved.current=true;
+  d.x=e.clientX;d.y=e.clientY;
+  orientation.current.yaw+=dx*.007;
+  orientation.current.pitch=Math.max(-.8,Math.min(.8,orientation.current.pitch-dy*.005));
+  applyGlobe();
  };
- id=requestAnimationFrame(tick);return()=>{active=false;cancelAnimationFrame(id);};},[]);
- const selectByPoint=(clientX:number,clientY:number)=>{
-  const rect=canvas.current?.getBoundingClientRect();if(!rect)return;
-  const uv=sphereUV((clientX-rect.left)/rect.width*SIDE,(clientY-rect.top)/rect.height*SIDE,rotate.current.yaw,rotate.current.pitch);
-  if(!uv)return;const n=Math.floor(uv.v*ROWS)*COLS+Math.floor(uv.u*COLS),id=SLOTS[n];
-  if(id>=0){setSelected(id);setFocused(Math.floor(id/5));}
- };
- const pointerDown=(e:React.PointerEvent<HTMLCanvasElement>)=>{drag.current={x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,moved:false};e.currentTarget.setPointerCapture(e.pointerId);};
- const pointerMove=(e:React.PointerEvent<HTMLCanvasElement>)=>{const d=drag.current;if(!d||focusedRef.current!==null)return;
-  const dx=e.clientX-d.x,dy=e.clientY-d.y;d.x=e.clientX;d.y=e.clientY;
-  if(Math.hypot(e.clientX-d.startX,e.clientY-d.startY)>5)d.moved=true;
-  rotate.current.yaw+=dx*.006;rotate.current.pitch=Math.max(-.7,Math.min(.7,rotate.current.pitch-dy*.004));
- };
- const pointerUp=(e:React.PointerEvent<HTMLCanvasElement>)=>{const d=drag.current;drag.current=null;if(d&&!d.moved)selectByPoint(e.clientX,e.clientY);};
- const focusTeam=(n:number)=>{setSelected(n*5);setFocused(n);};
- const returnSphere=()=>setFocused(null);
- return <div className="sphere-page">
-  <header className="sphere-header"><a className="sphere-brand" href="/"><img src="/ee-official-emblem-v2.png" alt="Exalted Era emblem"/><span>EXALTED<br/>ERA<small>THE SPHERE / BLACKSTAR</small></span></a><div className="sphere-head-right"><span className="edition">VALORANT MOBILE / ESPORTS</span><a href="/">RETURN TO WEBSITE ↗</a></div></header>
-  <nav className="sphere-nav" aria-label="Website navigation"><a href="/">HOME</a><a href="/#about">ABOUT US</a><a href="/#staff">STAFF</a><a href="/#roster">PLAYERS</a><a className="active" href="/sphere" aria-current="page">SPHERE</a><a href="/scrims">SCRIM TRACKER</a><a href="/recruitment">RECRUITMENT</a></nav>
-  <main className="sphere-layout">
-   <section className={`sphere-scene ${focused!==null?'focused':''}`} aria-label="Interactive player globe">
-    <div className="sphere-index">04 / OFFICIAL ROSTER<strong>THE SPHERE<span> / 20</span></strong></div>
-    <div className="sphere-medallion" aria-hidden="true"/>
-    <canvas ref={canvas} className="sphere-canvas" width={SIDE} height={SIDE} role="img" aria-label="3D globe made of player portrait cards. Drag to rotate or tap a player to reveal their team." onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={()=>drag.current=null} onWheel={e=>{e.preventDefault();rotate.current.pitch=Math.max(-.7,Math.min(.7,rotate.current.pitch+Math.sign(e.deltaY)*.07));}}/>
-    {focused!==null&&<><button className="sphere-back" type="button" onClick={returnSphere}>← BACK TO SPHERE</button><div className="sphere-team-reveal" aria-label={`Team ${focused+1} lineup`}>{roster.slice(focused*5,focused*5+5).map((p,j)=><button type="button" key={p.number} onClick={()=>setSelected(focused*5+j)} className={`sphere-big-card ${shown?'show':''} ${selected===focused*5+j?'selected':''}`} style={{transitionDelay:shown?`${j*65}ms`:'0ms'}} title={p.name}><img src={portrait(focused*5+j)} alt={p.name}/><span className="foot"><small>{p.number} / TEAM 0{focused+1}</small>{p.name}</span></button>)}</div><div className="sphere-selected-label">TEAM 0{focused+1} — FIVE AS ONE</div></>}
-    <div className="sphere-tip">{focused===null?'✧ DRAG TO ROTATE · CLICK A CARD TO REVEAL THE TEAM':'✧ SELECTED TEAM HAS MOVED FORWARD FROM THE SPHERE'}</div><div className="sphere-footer-no">BLACKSTAR / FIG—02</div>
+ const up=()=>{drag.current=null;window.setTimeout(()=>{moved.current=false;},80);};
+ return <div className="gold-page">
+  <header className="gold-header">
+   <a className="gold-brand" href="/"><img src="/ee-official-emblem-v2.png" alt="Exalted Era emblem"/><span><b>EXALTED ERA</b><small>THE SPHERE / GOLD EDITION</small></span></a>
+   <div className="gold-top-status"><span className="gold-status-dot"/> SPHERE EXPERIENCE <span className="gold-divider">/</span> 20 OFFICIAL MEMBERS</div>
+   <a className="gold-home" href="/">RETURN TO WEBSITE ↗</a>
+  </header>
+  <main className="gold-layout">
+   <section className={'gold-stage '+(focused!==null?'in-focus':'')} aria-label="Interactive 3D sphere with 20 player cards">
+    <div className="gold-stage-kicker">EXALTED ERA <i/> INTERACTIVE ROSTER</div>
+    <div className="gold-title"><span>THE</span> SPHERE <em>20</em></div>
+    <div className="gold-orbit gold-orbit-1"/><div className="gold-orbit gold-orbit-2"/><div className="gold-orbit gold-orbit-3"/>
+    <div className="gold-core"><img src="/ee-official-emblem-v2.png" alt=""/></div>
+    <div className="gold-card-stage" ref={stage} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onPointerLeave={up}>
+     {players.map((p,i)=><button key={p.id} ref={el=>{cards.current[i]=el;}} type="button" className="gold-player-card" title={p.name+' — Team '+pad(p.team+1)} aria-label={'Select '+p.name+' and show Team '+pad(p.team+1)} onClick={()=>choose(i)}>
+      <span className="gold-frame"><span className="gold-card-meta">EE <span>{pad(i+1)} / 20</span></span><span className="gold-portrait"><Portrait player={p}/></span><span className="gold-card-bottom"><b>{p.name}</b><small>TEAM {pad(p.team+1)}</small></span></span>
+     </button>)}
+    </div>
+    {focused!==null&&<><button type="button" className="gold-back" onClick={back}>← BACK TO SPHERE</button><div className="gold-focus-title"><small>EXALTED ERA / THE SELECTED FIVE</small><strong>TEAM {pad(focused+1)}</strong><span>FIVE PLAYERS · ONE ERA</span></div></>}
+    <div className="gold-stage-footer"><span><b>20</b> OFFICIAL MEMBERS <i/> FOUR TEAMS</span><span>{focused===null?'DRAG TO ROTATE · SELECT A PLAYER':'TEAM FOCUS · SELECT A TEAMMATE'}</span></div>
    </section>
-   <aside className="sphere-panel">
-    <div className="sphere-eyebrow">EXALTED ERA / THE COLLECTIVE</div><h1>{focused===null?'SELECT A PLAYER.':`TEAM 0${focused+1}.`}</h1><p>{focused===null?'Twenty players. Four teams. Select a card on the Sphere and its full five-member team moves forward.':'Five members form one horizontal lineup. Select a portrait to highlight a player, or return to the Sphere.'}</p>
-    <div className="sphere-tabs" aria-label="Select a team">{Array.from({length:4},(_,n)=><button key={n} type="button" aria-pressed={currentTeam===n} onClick={()=>focusTeam(n)}>0{n+1}</button>)}</div>
-    <div className="sphere-teammeta"><strong>TEAM 0{currentTeam+1}</strong><span>05 / 05 MEMBERS</span></div>
-    <div className="sphere-minirow">{roster.slice(currentTeam*5,currentTeam*5+5).map((p,j)=><button type="button" className={`sphere-mini ${selected===currentTeam*5+j?'selected':''}`} key={p.number} aria-label={`Show ${p.name} team`} onClick={()=>{setSelected(currentTeam*5+j);setFocused(currentTeam);}}><img src={portrait(currentTeam*5+j)} alt=""/><b>{p.number}</b></button>)}</div>
-    <button type="button" className="sphere-cta" onClick={()=>focused===null?focusTeam(currentTeam):returnSphere()}>{focused===null?'VIEW TEAM':'RETURN TO SPHERE'}<span>↗</span></button>
-    <div className="sphere-controls"><div className="sphere-eyebrow">SPHERE / MOTION SETTINGS</div><div className="sphere-controlrow"><span>Rotation speed</span><span>{speed}%</span></div><div className="sphere-controlrow"><input type="range" min="0" max="100" step="5" value={speed} onChange={e=>setSpeed(Number(e.target.value))} aria-label="Rotation speed"/></div><div className="sphere-controlrow"><button type="button" onClick={()=>setPlaying(!playing)}>{playing?'❚❚ PAUSE':'▶ PLAY'}</button><button type="button" onClick={()=>{rotate.current={yaw:-.34,pitch:.1};setFocused(null);}}>↺ RESET</button></div></div>
-    <div className="sphere-note">DEMO ROSTER / Initial players are from the current website. Remaining slots use placeholders until the full 20-member roster is uploaded.</div>
+   <aside className="gold-panel">
+    <div className="gold-panel-crest">✦</div><div className="gold-panel-kicker">EXALTED ERA / THE COLLECTIVE</div>
+    <h1>{focused===null?'SELECT A PLAYER':'THE SELECTED FIVE'}</h1>
+    <div className="gold-subtitle">{focused===null?'VIEW THEIR TEAM':'ONE TEAM · ONE ERA'}</div>
+    <div className="gold-rule"><span/></div>
+    <div className="gold-team-tabs" aria-label="Choose team">{Array.from({length:4},(_,i)=><button type="button" key={i} aria-pressed={panelTeam===i} onClick={()=>focused===null?setTeam(i):pickTeam(i)}>TEAM {pad(i+1)}</button>)}</div>
+    <div className="gold-thumbs">{players.slice(panelTeam*5,panelTeam*5+5).map(p=><button key={p.id} type="button" aria-label={'Select '+p.name} className={selected===p.id?'gold-active':''} onClick={()=>choose(p.id)}><Portrait player={p}/><span>{pad(p.id+1)}</span></button>)}</div>
+    <div className="gold-team-name">TEAM {pad(panelTeam+1)}</div><div className="gold-team-desc">05 MEMBERS / 01 TEAM</div>
+    <button type="button" className="gold-cta" onClick={()=>focused===null?pickTeam(team):back()}>{focused===null?'VIEW TEAM':'RETURN TO SPHERE'} <span>{focused===null?'→':'↩'}</span></button>
+    <p className="gold-help">{focused===null?'Drag to rotate. Click any portrait and its teammates will glide forward into a horizontal lineup.':'Click a teammate to highlight them, select another team above, or return to the rotating globe.'}</p>
+    <div className="gold-motion"><span>ROTATION SPEED</span><input type="range" min="0" max="100" step="5" value={speed} onChange={e=>setSpeed(Number(e.target.value))} aria-label="Rotation speed"/><b>{speed}%</b></div>
+    <button type="button" className="gold-pause" onClick={()=>setPlaying(!playing)}>{playing?'❚❚ PAUSE ROTATION':'▶ RESUME ROTATION'}</button>
+    <div className="gold-panel-footer">THE ERA IS HERE. THE EXALTED ENTERS.</div>
    </aside>
   </main>
  </div>;
