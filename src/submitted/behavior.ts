@@ -18,7 +18,7 @@ export function mountSubmittedHome(root:HTMLElement,players:Player[],staff:Membe
  }
  tabs.forEach(tab=>{
   tab.addEventListener('click',()=>showTeam(Number(tab.dataset.team)),options);
-  tab.addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();showTeam(event.key==='Home'?1:event.key==='End'?2:Number(tab.dataset.team)===1?2:1,true);}},options);
+  tab.addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const index=tabs.indexOf(tab);const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;showTeam(Number(tabs[next].dataset.team),true);}},options);
  });
 
  function openProfile(person:Member|Player,trigger:HTMLElement,isStaff=false){
