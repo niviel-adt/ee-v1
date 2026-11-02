@@ -51,3 +51,16 @@ export const teams: {id: string; name: string; members: Member[]}[] = [0, 1].map
     return {name: `PLAYER ${number}`, number, ...playerOverrides[number]};
   }),
 }));
+
+// Team 03 portraits imported from the team’s shared Google Drive folder.
+teams.push({
+  id: 'team-3',
+  name: 'TEAM 03',
+  members: [
+    {name: 'Bert', number: '11', image: '/portraits/team3-bert.webp'},
+    {name: 'Chifu', number: '12', image: '/portraits/team3-chifu.webp'},
+    {name: 'Dragonide', number: '13', image: '/portraits/team3-dragonide.webp'},
+    {name: 'Ikabu', number: '14', image: '/portraits/team3-ikabu.webp'},
+    {name: 'Yezuee', number: '15', image: '/portraits/team3-yezuee.webp'},
+  ],
+});

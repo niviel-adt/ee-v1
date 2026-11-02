@@ -5,6 +5,8 @@ const $=s=>root.querySelector(s),$$=s=>[...root.querySelectorAll(s)];
 let cardsReady=false,cardsMode=false,profileFocusFrame=0;
 const teams=sourceTeams.map(t=>({...t,members:[...t.members]}));
 while(teams.length<4)teams.push({name:'TEAM 0'+(teams.length+1),members:[]});
+function teamStatus(team){const count=teams[team].members.length;return count===5?'CONFIRMED ROSTER':count?`${count} / 5 PLAYERS CONFIRMED`:'ROSTER TO BE REVEALED'}
+$$('.team-label').forEach((label,team)=>{label.querySelector('span').textContent=teamStatus(team)});
 const shapes=[
  [[12,18],[23,33],[34,21],[16,46],[37,43]],
  [[63,17],[74,32],[90,22],[76,49],[94,43]],
@@ -27,7 +29,7 @@ function renderMap(){
  svg+=`<g class="cluster" data-team="${team}">`;
  const center=xy({team,slot:1});svg+=`<ellipse cx="${center.x*10}" cy="${center.y*6.6}" rx="190" ry="145" fill="url(#haze)"/>`;
  const pts=shapes[team];
- if(!mobile){const [lx,ly]=labels[team];svg+=`<path id="caption-${team}" d="M${lx*10} ${ly*6.6}q100 -30 220 5" fill="none"/><text class="arc-caption"><textPath href="#caption-${team}">0${team+1} / TEAM 0${team+1} — ${team<2?'THE COLLECTIVE':'AWAITING REVEAL'}</textPath></text>`;}
+ if(!mobile){const [lx,ly]=labels[team];svg+=`<path id="caption-${team}" d="M${lx*10} ${ly*6.6}q100 -30 220 5" fill="none"/><text class="arc-caption"><textPath href="#caption-${team}">0${team+1} / TEAM 0${team+1} — ${teams[team].members.length?'THE COLLECTIVE':'AWAITING REVEAL'}</textPath></text>`;}
  connections[team].forEach(([a,b],k)=>{const x=xy({team,slot:a}),y=xy({team,slot:b});svg+=`<line style="--delay:${k*.12}s" class="link ${selected===team*5+a||selected===team*5+b?'selected':''}" x1="${x.x*10}" y1="${x.y*6.6}" x2="${y.x*10}" y2="${y.y*6.6}"/>`});
  const anchor=xy({team,slot:4});svg+=`<circle class="satellite" cx="${anchor.x*10+24}" cy="${anchor.y*6.6-19}" r="2"/><path class="ghost-line" d="M${anchor.x*10} ${anchor.y*6.6}l24 -19 30 9"/>`;
  svg+='</g>';
@@ -69,7 +71,7 @@ function release(){dragging=null;chart.classList.remove('dragging')}chart.addEve
 chart.addEventListener('keydown',e=>{if(e.target.closest('.star'))return;if(e.key==='+'||e.key==='='){e.preventDefault();setZoom(zoom+.3)}if(e.key==='-'){e.preventDefault();setZoom(zoom-.3)}if(e.key==='0'){e.preventDefault();resetCamera()}});
 chart.tabIndex=0;chart.setAttribute('aria-label','Interactive constellation map. Drag to pan, use plus or minus to zoom, zero to reset. Select a star to view its player.');
 $('#quick-profile').onclick=()=>$('#profile').click();
-function showTour(n){tourStep=(n+4)%4;isolated=false;$('#isolate').setAttribute('aria-pressed','false');$('#isolate').textContent='ISOLATE TEAM';applyFilter('all');select(tourStep*5);$('#tour-panel').hidden=false;$('#tour-start').textContent='END TOUR ×';$('#tour-step').textContent=`CONSTELLATION ${tourStep+1} / 4`;$('#tour-title').textContent=`TEAM 0${tourStep+1}`;$('#tour-copy').textContent=tourStep<2?teams[tourStep].members.map(m=>m.name).join(' · '):'Five stars for the next chapter. Player names and portraits are yet to be revealed.';const pts=Array.from({length:5},(_,slot)=>xy({team:tourStep,slot}));const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);centerPoint((Math.min(...xs)+Math.max(...xs))/2,(Math.min(...ys)+Math.max(...ys))/2,innerWidth<=700?1.25:1.6);$('#tour-next').textContent=tourStep===3?'FINISH TOUR ✓':'NEXT TEAM →'}
+function showTour(n){tourStep=(n+4)%4;isolated=false;$('#isolate').setAttribute('aria-pressed','false');$('#isolate').textContent='ISOLATE TEAM';applyFilter('all');select(tourStep*5);$('#tour-panel').hidden=false;$('#tour-start').textContent='END TOUR ×';$('#tour-step').textContent=`CONSTELLATION ${tourStep+1} / 4`;$('#tour-title').textContent=`TEAM 0${tourStep+1}`;$('#tour-copy').textContent=teams[tourStep].members.length?teams[tourStep].members.map(m=>m.name).join(' · '):'Five stars for the next chapter. Player names and portraits are yet to be revealed.';const pts=Array.from({length:5},(_,slot)=>xy({team:tourStep,slot}));const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);centerPoint((Math.min(...xs)+Math.max(...xs))/2,(Math.min(...ys)+Math.max(...ys))/2,innerWidth<=700?1.25:1.6);$('#tour-next').textContent=tourStep===3?'FINISH TOUR ✓':'NEXT TEAM →'}
 function endTour(){tourStep=-1;$('#tour-panel').hidden=true;$('#tour-start').textContent='TAKE A TOUR ↗'}
 $('#tour-start').onclick=()=>{if(tourStep<0){showTour(0)}else{endTour();resetCamera()}};$('#tour-prev').onclick=()=>showTour(tourStep-1);$('#tour-next').onclick=()=>{if(tourStep===3){endTour();resetCamera()}else showTour(tourStep+1)};$('#tour-close').onclick=()=>{endTour();resetCamera()};
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#dialog').open){endTour();touchPan=false;chart.classList.remove('touch-pan');$('#touch-pan').setAttribute('aria-pressed','false');$('#touch-pan').textContent='PAN MAP';resetCamera()}});
@@ -113,7 +115,7 @@ search.addEventListener('input',renderSearch);search.addEventListener('focus',()
 $('#clear-search').onclick=()=>{search.value='';renderSearch();search.focus()};
 function focusTeam(team){
  hidePreview();endTour();results.hidden=true;focusedTeam=team;isolated=false;$('#isolate').setAttribute('aria-pressed','false');$('#isolate').textContent='ISOLATE TEAM';applyFilter(String(team));if(players[selected].team!==team)select(team*5);
- $('#team-focus').hidden=false;$('#focus-kicker').textContent=`CONSTELLATION 0${team+1} / 05 PLAYER POSITIONS`;$('#focus-title').textContent=`TEAM 0${team+1}`;$('#focus-description').textContent=team<2?'Five players. One shared pursuit of excellence.':'The next chapter of the collective. Player names and portraits to be revealed.';
+ $('#team-focus').hidden=false;$('#focus-kicker').textContent=`CONSTELLATION 0${team+1} / 05 PLAYER POSITIONS`;$('#focus-title').textContent=`TEAM 0${team+1}`;$('#focus-description').textContent=teams[team].members.length?`${teams[team].members.length} confirmed player${teams[team].members.length===1?'':'s'}. ${5-teams[team].members.length?`${5-teams[team].members.length} positions to be revealed.`:'One shared pursuit of excellence.'}`:'The next chapter of the collective. Player names and portraits to be revealed.';
  const roster=$('#focus-roster');roster.replaceChildren();players.forEach((p,i)=>{if(p.team!==team)return;const b=document.createElement('button');b.textContent=p.name;b.setAttribute('aria-label',`Select ${p.name} in focused team`);b.onclick=()=>{select(i);showPreview(i)};roster.append(b)});
  const pts=Array.from({length:5},(_,slot)=>xy({team,slot}));centerPoint((Math.min(...pts.map(p=>p.x))+Math.max(...pts.map(p=>p.x)))/2,(Math.min(...pts.map(p=>p.y))+Math.max(...pts.map(p=>p.y)))/2,innerWidth<=700?1.12:1.5);
 }
