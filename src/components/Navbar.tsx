@@ -25,6 +25,7 @@ export function Navbar(){
    <Brand/>
    <nav aria-label="Main navigation" className="nav-links">
     {navigation.map(([label,id])=><a key={id} href={`#${id}`} aria-current={id===active?'location':undefined}>{id===active&&<motion.span layoutId="nav-pill" className="nav-pill" transition={{type:'spring',stiffness:420,damping:34}}/>}<span>{label}</span></a>)}
+    <a href="/scrims"><span>Scrim Tracker</span></a>
     <a href="/recruitment"><span>Recruitment</span></a>
    </nav>
    <a className="nav-contact" href="/recruitment"><span className="live-dot" aria-hidden="true"/>JOIN THE ERA <ArrowUpRight size={14}/></a>
@@ -35,7 +36,7 @@ export function Navbar(){
    {open&&<motion.div ref={panel} id="mobile-navigation" className="mobile-menu" initial={{opacity:0,clipPath:'inset(0 0 100% 0)'}} animate={{opacity:1,clipPath:'inset(0 0 0% 0)'}} exit={{opacity:0,clipPath:'inset(0 0 100% 0)'}} transition={{duration:.45,ease:[0.22,1,0.36,1]}}>
     <nav aria-label="Mobile navigation">
      <motion.ol initial="hidden" animate="show" variants={{hidden:{},show:{transition:{staggerChildren:.05,delayChildren:.12}}}}>
-      {[...navigation,['Recruitment','/recruitment']].map(([label,id],i)=><motion.li key={id} variants={{hidden:{opacity:0,y:24},show:{opacity:1,y:0}}}><a href={id.startsWith('/')?id:`#${id}`} aria-current={id===active?'location':undefined} onClick={()=>setOpen(false)}><small>{String(i+1).padStart(2,'0')}</small>{label}</a></motion.li>)}
+      {[...navigation,['Scrim Tracker','/scrims'],['Recruitment','/recruitment']].map(([label,id],i)=><motion.li key={id} variants={{hidden:{opacity:0,y:24},show:{opacity:1,y:0}}}><a href={id.startsWith('/')?id:`#${id}`} aria-current={id===active?'location':undefined} onClick={()=>setOpen(false)}><small>{String(i+1).padStart(2,'0')}</small>{label}</a></motion.li>)}
      </motion.ol>
     </nav>
     <div className="mobile-menu-foot"><a href={site.discordUrl} target="_blank" rel="noopener noreferrer">Discord <ArrowUpRight size={14}/><span className="sr-only"> (opens in a new tab)</span></a><a href={site.facebookUrl} target="_blank" rel="noopener noreferrer">Facebook <ArrowUpRight size={14}/><span className="sr-only"> (opens in a new tab)</span></a></div>
