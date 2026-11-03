@@ -249,3 +249,7 @@ dialog::backdrop{background:#50606b85;backdrop-filter:blur(5px)}
 .back-to-top:hover{background:#455e6c}
 .dialog-open .back-to-top{visibility:hidden}
 @media(max-width:760px){.back-to-top{right:max(17px,env(safe-area-inset-right));bottom:max(17px,env(safe-area-inset-bottom))}}
+
+/* Keep all four team selectors reachable on narrow screens. */
+.team-tabs{flex-wrap:wrap;max-width:100%}
+@media(max-width:480px){.team-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}.team-tabs button{min-width:0;width:100%}}

@@ -26,8 +26,8 @@ const playerOverrides: Record<string, Partial<Member>> = {
     image: '/portraits/16gyVlLCQgTrm3dh9-HmbEVTZvg_33bY6.webp',
   },
   '09': {
-    name: 'Reaper',
-    image: '/portraits/1F0TjyU7-XAaRsAi6Tl2KWIygbmKfjQpj.webp',
+    name: 'Squalo',
+    image: '/portraits/team2-squalo.webp',
   },
   '08': {
     name: 'Ichi',
@@ -62,5 +62,18 @@ teams.push({
     {name: 'Dragonide', number: '13', image: '/portraits/team3-dragonide.webp'},
     {name: 'Ikabu', number: '14', image: '/portraits/team3-ikabu.webp'},
     {name: 'Yezuee', number: '15', image: '/portraits/team3-yezuee.webp'},
+  ],
+});
+
+// Team 04: full five-player roster.
+teams.push({
+  id: 'team-4',
+  name: 'TEAM 04',
+  members: [
+    {name: 'Garboy', number: '16', image: '/portraits/team4-garboy.webp'},
+    {name: 'Gelow', number: '17', image: '/portraits/team4-gelow.webp'},
+    {name: 'Kishouu', number: '18', image: '/portraits/team4-kishouu.webp'},
+    {name: 'Tomaso', number: '19', image: '/portraits/team4-tomaso.webp'},
+    {name: 'Reaper', number: '20', image: '/portraits/1F0TjyU7-XAaRsAi6Tl2KWIygbmKfjQpj.webp'},
   ],
 });
