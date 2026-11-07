@@ -6,7 +6,8 @@ import {mountSubmittedHome} from '../submitted/behavior';
 import '../submitted/base.css';
 import '../submitted/comfort.css';
 import '../submitted/flowing-gold.css';
-import {mountFlowingGold} from '../submitted/flowing-motion';
+import {mountFlowingIntro} from '../submitted/flowing-intro';
+import '../submitted/flowing-intro.css';
 
 export function SubmittedHome(){
  const host=useRef<HTMLDivElement>(null);
@@ -14,7 +15,7 @@ export function SubmittedHome(){
   if(!host.current)return;
   const players=teams.flatMap((team,index)=>team.members.map(player=>({...player,team:index+1})));
   const unmountHome=mountSubmittedHome(host.current,players,staff);
-  const unmountMotion=mountFlowingGold(host.current);
+  const unmountMotion=mountFlowingIntro(host.current);
   return ()=>{unmountMotion();unmountHome();};
  },[]);
  return <div ref={host} dangerouslySetInnerHTML={{__html:markup}}/>;
