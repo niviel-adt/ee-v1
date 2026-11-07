@@ -13,7 +13,7 @@
 .ee8-filament path{fill:none;stroke:url(#ee8-gold);stroke-width:1.2;stroke-dasharray:1;stroke-dashoffset:1;vector-effect:non-scaling-stroke;opacity:.75}
 .ee8-filament .ee8-ghost{stroke-width:.65;opacity:.32}
 .ee8-emblem{position:absolute;top:46%;left:50%;width:min(66vw,690px);transform:translate(-50%,-50%);display:grid;place-items:center;will-change:transform}
-.ee8-emblem img{width:100%;height:auto;max-height:72vh;object-fit:contain;position:relative;z-index:1;filter:sepia(.7) saturate(1.7) hue-rotate(350deg) drop-shadow(0 15px 45px #0008) drop-shadow(0 0 25px #a67e352b)}
+.ee8-emblem img{width:100%;height:auto;max-height:72vh;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 15px 45px #0008) drop-shadow(0 0 25px #a67e352b)}
 .ee8-glow{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,#d7aa6040,transparent 69%);filter:blur(45px)}
 .ee8-toplabel,.ee8-rightlabel{position:absolute;top:120px;font-size:10px;letter-spacing:.24em;color:#b6a68d}
 .ee8-toplabel{left:clamp(24px,5.4vw,104px)}
