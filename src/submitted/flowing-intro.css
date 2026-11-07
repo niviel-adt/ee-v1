@@ -1,0 +1,67 @@
+
+/* V8 design integration: full-screen editorial journey above existing functional sections */
+.ee8-active #ee-legacy-home{display:none!important}
+.ee8-experience{background:#070707;color:#eee5d6;font-family:'DM Sans',sans-serif;position:relative}
+.ee8-experience em{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;color:#d4ad74}
+.ee8-hero{height:205svh;position:relative;min-height:1100px;background:#070707}
+.ee8-sticky{height:100svh;position:sticky;top:0;overflow:hidden;background:radial-gradient(ellipse 50% 55% at 50% 43%,rgba(99,67,29,.13),transparent 65%)}
+.ee8-grid{position:absolute;inset:0;opacity:.22;background:linear-gradient(90deg,transparent 49.95%,#d3b58229 50%,transparent 50.05%),linear-gradient(transparent 49.95%,#d3b58226 50%,transparent 50.05%)}
+.ee8-ring{position:absolute;top:46%;left:50%;width:min(70vw,690px);aspect-ratio:1;border-radius:50%;border:1px solid #cba56a25;transform:translate(-50%,-50%);box-shadow:0 0 0 100px #cba56a06,0 0 0 210px #cba56a03;pointer-events:none}
+.ee8-ring:before,.ee8-ring:after{content:'';position:absolute;inset:11%;border:1px solid #cba56a22;border-radius:50%;transform:rotate(-28deg) scaleX(.78)}
+.ee8-ring:after{transform:rotate(28deg) scaleX(.78)}
+.ee8-filament{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.ee8-filament path{fill:none;stroke:url(#ee8-gold);stroke-width:1.2;stroke-dasharray:1;stroke-dashoffset:1;vector-effect:non-scaling-stroke;opacity:.75}
+.ee8-filament .ee8-ghost{stroke-width:.65;opacity:.32}
+.ee8-emblem{position:absolute;top:46%;left:50%;width:min(66vw,690px);transform:translate(-50%,-50%);display:grid;place-items:center;will-change:transform}
+.ee8-emblem img{width:100%;height:auto;max-height:72vh;object-fit:contain;position:relative;z-index:1;filter:sepia(.7) saturate(1.7) hue-rotate(350deg) drop-shadow(0 15px 45px #0008) drop-shadow(0 0 25px #a67e352b)}
+.ee8-glow{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,#d7aa6040,transparent 69%);filter:blur(45px)}
+.ee8-toplabel,.ee8-rightlabel{position:absolute;top:120px;font-size:10px;letter-spacing:.24em;color:#b6a68d}
+.ee8-toplabel{left:clamp(24px,5.4vw,104px)}
+.ee8-rightlabel{right:clamp(24px,5.4vw,104px)}
+.ee8-caption{position:absolute;bottom:13%;width:100%;text-align:center;z-index:3;pointer-events:none;will-change:transform,opacity}
+.ee8-caption>span{font-size:10px;letter-spacing:.36em;color:#d6b982}
+.ee8-caption h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(62px,10vw,162px);font-weight:400;letter-spacing:-.06em;line-height:1;margin:22px 0;text-transform:none;color:#eee1cc}
+.ee8-caption h1 em{font-weight:400}
+.ee8-cue{position:absolute;bottom:33px;left:50%;transform:translateX(-50%);font-size:10px;letter-spacing:.3em;color:#c8b294;z-index:4;display:flex;gap:18px;align-items:center;white-space:nowrap}
+.ee8-cue span{font-size:18px}
+.ee8-chapter{min-height:110svh;padding:clamp(110px,15vw,220px) clamp(24px,5.4vw,104px);background:#090807;display:flex;align-items:center}
+.ee8-wrap{width:100%;max-width:1450px;margin:auto}
+.ee8-meta{font-size:11px;letter-spacing:.25em;color:#c3a372;margin:0 0 55px}
+.ee8-chapter h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(55px,8.2vw,139px);font-weight:400;line-height:.94;letter-spacing:-.045em;color:#e7ded1;margin:0;text-transform:none}
+.ee8-chapter-bottom{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-top:clamp(65px,10vw,145px)}
+.ee8-chapter-bottom p{max-width:520px;color:#aa9d8b;font-size:16px;line-height:1.95;margin:0}
+.ee8-chapter-bottom span{font-size:12px;letter-spacing:.18em;color:#bda780;line-height:2;text-align:right}
+.ee8-chapter-bottom span i{font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;letter-spacing:0;color:#e2c99f}
+.ee8-interlude{height:165svh;position:relative;background:#070707}
+.ee8-interlude-pin{position:sticky;top:0;height:100svh;display:grid;place-items:center;overflow:hidden}
+.ee8-interlude svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.ee8-interlude svg path{fill:none;stroke:url(#ee8-ribbon);stroke-width:1.4;stroke-dasharray:1;stroke-dashoffset:1;opacity:.64;vector-effect:non-scaling-stroke}
+.ee8-interlude svg path:first-child,.ee8-interlude svg path:last-child{opacity:.28}
+.ee8-sphere-copy{text-align:center;position:relative;z-index:2}
+.ee8-sphere-copy>span,.ee8-sphere-copy>p{font-size:11px;letter-spacing:.28em;color:#c3a67c}
+.ee8-sphere-copy h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(75px,12vw,178px);font-weight:400;line-height:1;letter-spacing:-.07em;text-transform:none;margin:24px 0}
+.ee8-sphere-copy a{display:inline-block;margin-top:34px;padding:13px 23px;border:1px solid #cba56a66;font-size:11px;letter-spacing:.15em;color:#e5c68c}
+.ee8-sphere-copy a:hover{background:#cba56a20}
+.ee8-reveal{opacity:0;translate:0 42px;transition:opacity 1s ease,translate 1.1s cubic-bezier(.2,.8,.2,1)}
+.ee8-reveal.ee8-visible{opacity:1;translate:0 0}
+.ee8-active .roster{background:#090807!important;padding-top:110px;padding-bottom:110px}
+.ee8-active .roster h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(44px,5.6vw,78px);font-weight:400;text-transform:none}
+.ee8-active .team-tabs button{border:0;border-bottom:1px solid #cba56a38;background:transparent;color:#baaa90;padding:22px 24px}
+.ee8-active .team-tabs button[aria-selected=true]{color:#eed0a0;border-bottom:2px solid #d4ad74}
+.ee8-active .player-image{border:0;background:#100d09}
+.ee8-active .player-card{background:transparent}
+.ee8-active .player-info{border-color:#cba56a24}
+@media(max-width:760px){
+ .ee8-hero{height:175svh;min-height:850px}
+ .ee8-toplabel{top:116px;left:20px}.ee8-rightlabel{display:none}
+ .ee8-emblem{width:94vw;top:43%}.ee8-ring{width:95vw;top:43%}
+ .ee8-caption{bottom:20%}.ee8-caption h1{font-size:clamp(57px,12vw,85px);margin:17px 10px}
+ .ee8-chapter{padding:100px 22px;min-height:90svh}
+ .ee8-chapter h2{font-size:clamp(48px,10vw,80px)}
+ .ee8-chapter-bottom{flex-direction:column;align-items:start;margin-top:70px}
+ .ee8-chapter-bottom span{text-align:left}
+ .ee8-interlude{height:140svh}.ee8-sphere-copy h2{font-size:clamp(74px,17vw,125px)}
+ .ee8-sphere-copy>span,.ee8-sphere-copy>p{font-size:9px}
+ .ee8-active .roster{padding-top:80px;padding-bottom:80px}
+}
+@media(prefers-reduced-motion:reduce){.ee8-reveal{opacity:1;translate:none;transition:none}.ee8-hero{height:100svh;min-height:680px}.ee8-interlude{height:100svh}}
