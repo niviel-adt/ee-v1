@@ -6,7 +6,7 @@ export function mountFlowingIntro(root: HTMLElement) {
  root.classList.add('ee8-active');
  const section=document.createElement('div');
  section.className='ee8-experience';
- section.innerHTML=String.raw\`
+ section.innerHTML=String.raw`
  <section class="ee8-hero" id="home" aria-label="Exalted Era introduction">
   <div class="ee8-sticky">
    <div class="ee8-grid"></div><div class="ee8-ring" aria-hidden="true"></div>
@@ -42,7 +42,7 @@ export function mountFlowingIntro(root: HTMLElement) {
    </svg>
    <div class="ee8-sphere-copy"><span>TWENTY PLACES. ONE LEGACY.</span><h2>The <em>Sphere.</em></h2><p>WHERE DEDICATION BECOMES DISTINCTION</p><a href="/sphere">ENTER THE SPHERE ↗</a></div>
   </div>
- </section>\`;
+ </section>`;
  main.insertBefore(section,legacyHero);
  const reveal=Array.from(root.querySelectorAll<HTMLElement>('.ee8-chapter h2,.ee8-chapter-bottom,.ee8-sphere-copy,.roster-header,.player-card,.staff-row,.news-story,.highlight-link,.join-main'));
  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('ee8-visible');observer.unobserve(e.target)}}),{rootMargin:'0px 0px -30px 0px',threshold:.08});
@@ -62,10 +62,10 @@ export function mountFlowingIntro(root: HTMLElement) {
   if(reduced.matches)return;
   const h=hero.getBoundingClientRect();
   const p=clamp(-h.top/Math.max(1,hero.offsetHeight-innerHeight));
-  emblem.style.transform=\`translate(-50%,-50%) translateY(\${(-p*85).toFixed(1)}px) scale(\${(1-p*.24).toFixed(3)}) rotate(\${(p*5).toFixed(2)}deg)\`;
-  caption.style.transform=\`translateY(\${p*75}px)\`;
+  emblem.style.transform=`translate(-50%,-50%) translateY(${(-p*85).toFixed(1)}px) scale(${(1-p*.24).toFixed(3)}) rotate(${(p*5).toFixed(2)}deg)`;
+  caption.style.transform=`translateY(${p*75}px)`;
   caption.style.opacity=String(1-clamp(p*1.35));
-  ring.style.transform=\`translate(-50%,-50%) rotate(\${p*160}deg) scale(\${1+p*.15})\`;
+  ring.style.transform=`translate(-50%,-50%) rotate(${p*160}deg) scale(${1+p*.15})`;
   strokes.forEach((path,i)=>{path.style.strokeDashoffset=String(1-clamp(p*1.6-i*.07))});
   const r=interlude.getBoundingClientRect();
   const q=clamp(-r.top/Math.max(1,interlude.offsetHeight-innerHeight));
