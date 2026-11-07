@@ -17,7 +17,7 @@ export function mountFlowingIntro(root: HTMLElement) {
     <path class="ee8-ghost" d="M -120 670 C 280 410,365 800,700 480 S 1160 200,1510 445" pathLength="1"/>
     <path class="ee8-ghost" d="M -100 250 C 240 510,310 90,720 410 S 1220 740,1480 510" pathLength="1"/>
    </svg>
-   <div class="ee8-emblem"><div class="ee8-glow"></div><img src="/ee-official-emblem-v2.png" alt="Exalted Era emblem"></div>
+   <div class="ee8-emblem"><div class="ee8-glow"></div><img src="/ee-new-gold.png" alt="Exalted Era emblem"></div>
    <span class="ee8-toplabel">EST. MMXXVI &nbsp; / &nbsp; THE SPHERE</span>
    <span class="ee8-rightlabel">A LEGACY FORGED IN MOTION</span>
    <div class="ee8-caption"><span>AN ERA OF EXCELLENCE</span><h1>Beyond <em>ordinary.</em></h1></div>
