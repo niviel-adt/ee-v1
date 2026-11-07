@@ -98,3 +98,9 @@ dialog::backdrop{background:#030303d9;backdrop-filter:blur(10px)}
  .navigation a{color:#d2c2ab}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.metal-emblem,.hero-art:after{animation:none}[data-ee-reveal]{opacity:1;transform:none;transition:none}}
+
+.hero .ee-flow-line{display:block;position:absolute;width:min(80vw,900px);height:1px;top:calc(24% + var(--i)*11%);left:37%;pointer-events:none;opacity:.23;transform:rotate(calc(-18deg + var(--i)*7deg)) translateX(var(--ee-drift,0px));background:linear-gradient(90deg,transparent,#d6af71 38%,#edd3a0 51%,transparent 80%);filter:blur(.3px);z-index:1}
+.hero .hero-copy{z-index:5}
+.hero .hero-art{z-index:2}
+@media(max-width:760px){.hero .ee-flow-line{left:10%;width:100vw;opacity:.14}}
+@media(prefers-reduced-motion:reduce){.hero .ee-flow-line{display:none}}
